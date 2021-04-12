@@ -6,9 +6,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from sqlalchemy import create_engine
 from werkzeug.security import generate_password_hash, check_password_hash
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, PasswordField
 from wtforms.validators import DataRequired, Email
 from flask_login import UserMixin
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
+from functools import wraps
 
 app = Flask(__name__)
 
@@ -16,11 +19,11 @@ app = Flask(__name__)
 if not os.getenv("DATABASE_URL"):
     raise RuntimeError("DATABASE_URL is not set")
 
-# Configure session to use filesystem
 if not os.getenv("SECRET_KEY"):
     raise RuntimeError("SECRET_KEY is not set")
 
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
+# Configure session to use filesystem
 app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_TYPE'] = "filesystem"
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
@@ -28,35 +31,45 @@ Session(app)
 
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
-# db = scoped_session(sessionmaker(bind=engine))
-db = SQLAlchemy(app)
+db = scoped_session(sessionmaker(bind=engine))
 
 
 # Model
-class UserModel(db.Model):
-    __tablename__ = 'Users'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(255), unique=True)
-    password = db.Column(db.String(255), unique=True)
-
-    def __init__(self, username, password):
-        self.id = random.randint(1000, 100000)
-        self.username = username
-        self.password = password
-
-    def __repr__(self):
-        return '<User %r>' % self.username
+# class UserModel(UserMixin, db.Model):
+#     __tablename__ = 'Users'
+#     id = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String(255), unique=True)
+#     password = db.Column(db.String(255), unique=True)
+#
+#     def __init__(self, username, password):
+#         self.id = random.randint(1000, 100000)
+#         self.username = username
+#         self.password = password
+#
+#     def __repr__(self):
+#         return '<User %r>' % self.username
 
 
 class NameForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
-    password = StringField('Password', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+
+# Custom Decorator to require login
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get('username') is None or session.get('logged_in') is False:
+            return render_template('landing_page.html')
+        return f(*args, **kwargs)
+
+    return decorated_function
 
 
 @app.shell_context_processor
 def make_shell_context():
-    return dict(db=db, UserModel=UserModel, app=app)
+    return dict(db=db, app=app)
 
 
 @app.route('/')
@@ -68,15 +81,18 @@ def landing_page():
 def sign_up():
     name_form = NameForm()
     if name_form.validate_on_submit():
-        query_user = UserModel.query.filter_by(username=str(name_form.email.data)).first()
-        if query_user is None:
+        stmt = "SELECT username FROM public.\"Users\" WHERE username =:username"
+        query = db.execute(stmt, {"username": name_form.email.data}).fetchone()
+        if query is None:
             hashed_password = generate_password_hash(str(name_form.password.data), "sha256")
-            new_user = UserModel(name_form.email.data, hashed_password)
+            ins_stmt = "INSERT into public.\"Users\" (id, username, password) VALUES(:id, :username, :password)"
+            db.execute(ins_stmt, {"id": random.randint(10000, 100000), "username": name_form.email.data,
+                                  "password": hashed_password})
+            db.commit()
             name_form.email.data = ''
             name_form.password.data = ''
-            db.session.add(new_user)
-            db.session.commit()
             session['username'] = name_form.email.data
+            session['logged_in'] = True
         else:
             name_form.email.data = ''
             name_form.password.data = ''
@@ -90,20 +106,20 @@ def sign_up():
 def login():
     name_form = NameForm()
     if name_form.validate_on_submit():
-        username = name_form.email.data
         password = str(name_form.password.data)
-        if session.get('username') is username:
+        if session.get('username') == name_form.email.data:
             flash('You are already logged in', 'danger')
-            return render_template('protected.html')
-        user_db = UserModel.query.filter_by(username=name_form.email.data).first()
-        if user_db is not None:
-            if check_password_hash(str(user_db.password), password):
-                print(user_db.password)
-                print(password)
+            return render_template('protected.html', check="Still in Session")
+
+        stmt = "SELECT * FROM public.\"Users\" WHERE username =:username"
+        query = db.execute(stmt, {"username": name_form.email.data}).fetchone()
+        if query is not None:
+            if check_password_hash(query['password'], password):
                 session['username'] = name_form.email.data
+                session['logged_in'] = True
                 name_form.email.data = ''
                 name_form.password.data = ''
-                return render_template('protected.html')
+                return render_template('protected.html', check="New Login")
             else:
                 name_form.email.data = ''
                 name_form.password.data = ''
@@ -119,5 +135,17 @@ def login():
 def logout():
     if 'username' in session:
         session.pop('username')
+        session['logged_in'] = False
         return redirect(url_for('landing_page'))
+
+
+@app.route('/protected')
+@login_required
+def protected():
+    return render_template('protected.html')
+
+
+@app.errorhandler(401)
+def unauthorized():
+    return render_template('unauthorized.html')
 
