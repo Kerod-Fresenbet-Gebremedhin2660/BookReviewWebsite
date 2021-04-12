@@ -21,7 +21,7 @@ db = scoped_session(sessionmaker(bind=engine))
 books_list = dictmaker()
 # print(books_list)
 for i in range(len(books_list)):
-    db.execute("INSERT into public.\"books\" (isbn, title, author, year) VALUES(:isbn, :title, :author, :year)",
+    db.execute("INSERT into public.\"books\" (isbn, title, author, year) VALUES(:isbn, :title, :author, :year) ON CONFLICT (isbn) DO NOTHING",
                {"isbn": books_list[i].get('isbn'), "title": books_list[i].get('title'),
                 "author": books_list[i].get('author'), "year": books_list[i].get('year')})
     db.commit()

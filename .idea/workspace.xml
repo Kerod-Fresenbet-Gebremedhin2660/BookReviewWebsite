@@ -2,17 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3f681e14-4686-47ae-bb50-3cab130aa237" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Models.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dictMaker.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/import.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/unauthorized.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/book.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/search.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/application.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/books.csv" beforeDir="false" afterPath="$PROJECT_DIR$/books.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flask_session/2029240f6d1128be89ddc32729463129" beforeDir="false" afterPath="$PROJECT_DIR$/flask_session/2029240f6d1128be89ddc32729463129" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/flask_session/d3bf62c009ba10da848df8f4e1c5ee65" beforeDir="false" afterPath="$PROJECT_DIR$/flask_session/d3bf62c009ba10da848df8f4e1c5ee65" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/landing_page.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/landing_page.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/protected.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/protected.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/import.py" beforeDir="false" afterPath="$PROJECT_DIR$/import.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -141,7 +138,9 @@
       <workItem from="1618033905905" duration="582000" />
       <workItem from="1618035238739" duration="20692000" />
       <workItem from="1618079443502" duration="5520000" />
-      <workItem from="1618216583562" duration="344000" />
+      <workItem from="1618216583562" duration="2393000" />
+      <workItem from="1618234062651" duration="3496000" />
+      <workItem from="1618241447378" duration="3063000" />
     </task>
     <servers />
   </component>
@@ -158,6 +157,10 @@
     </state>
     <state x="1000" y="185" width="800" height="672" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.21.1920.1031@0.21.1920.1031" timestamp="1617900091361" />
     <state x="794" y="134" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.1920.1055@0.25.1920.1055" timestamp="1618042223748" />
+    <state x="743" y="310" width="424" height="477" key="FileChooserDialogImpl" timestamp="1618217112672">
+      <screen x="0" y="25" width="1920" height="1055" />
+    </state>
+    <state x="743" y="310" width="424" height="477" key="FileChooserDialogImpl/0.25.1920.1055@0.25.1920.1055" timestamp="1618217112672" />
     <state width="1874" height="301" key="GridCell.Tab.0.bottom" timestamp="1618082899985">
       <screen x="0" y="25" width="1920" height="1055" />
     </state>
@@ -178,6 +181,10 @@
       <screen x="0" y="21" width="1920" height="1031" />
     </state>
     <state x="175" y="197" key="SettingsEditor/0.21.1920.1031@0.21.1920.1031" timestamp="1617898712238" />
+    <state x="693" y="360" width="524" height="377" key="com.intellij.database.dbimport.ImportUtil.ChooseTargetDialog" timestamp="1618234771857">
+      <screen x="0" y="25" width="1920" height="1055" />
+    </state>
+    <state x="693" y="360" width="524" height="377" key="com.intellij.database.dbimport.ImportUtil.ChooseTargetDialog/0.25.1920.1055@0.25.1920.1055" timestamp="1618234771857" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/projectone_Kerod_Fresenbet_Gebremedhin2660$import.coverage" NAME="import Coverage Results" MODIFIED="1618082896633" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

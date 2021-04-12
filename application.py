@@ -7,11 +7,12 @@ from flask_wtf import FlaskForm
 from sqlalchemy import create_engine
 from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms import StringField, SubmitField, PasswordField
-from wtforms.validators import DataRequired, Email
+from wtforms.validators import DataRequired, Email, NumberRange
 from flask_login import UserMixin
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from functools import wraps
+from markupsafe import Markup
 
 app = Flask(__name__)
 
@@ -54,6 +55,11 @@ class NameForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+
+class Search(FlaskForm):
+    book_search = StringField('Search for Book using ISBN', validators=[DataRequired()])
+    submit = SubmitField('Search')
 
 
 # Custom Decorator to require login
@@ -145,7 +151,20 @@ def protected():
     return render_template('protected.html')
 
 
+@app.route('/search', methods=['GET', 'POST'])
+@login_required
+def search():
+    book_search = Search()
+    if book_search.validate_on_submit():
+        isbn = str(book_search.book_search.data)
+        stmt = 'SELECT * FROM public.\"books\" WHERE isbn = :isbn'
+        query = db.execute(stmt, {"isbn": isbn}).fetchone()
+        return render_template('book.html', query=query)
+    return render_template('search.html', book_search=book_search)
+
+
 @app.errorhandler(401)
 def unauthorized():
     return render_template('unauthorized.html')
+
 
