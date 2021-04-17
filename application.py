@@ -1,6 +1,6 @@
 import os
 import random
-from flask import Flask, render_template, session, flash, jsonify, url_for, redirect
+from flask import Flask, render_template, session, flash, jsonify, url_for, redirect, request, make_response
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
@@ -62,7 +62,10 @@ class Search(FlaskForm):
     submit = SubmitField('Search')
 
 
-# Custom Decorator to require login
+# class Review(FlaskForm):
+
+
+# Custom Decorator to require login for session
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -71,6 +74,23 @@ def login_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
+
+# Custom Decorator to require login for user agent access through basic authentication
+
+def auth_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        stmt = "SELECT * FROM public.\"Users\" WHERE username =:username"
+        result = db.execute(stmt, {"username": auth.username}).fetchone()
+        print(result)
+        if auth and check_password_hash(result['password'], auth.password):
+            return f(*args, **kwargs)
+
+        return make_response('Could not verify your login!', 401, {'WWW-Authenticate': 'Basic realm="Login Required"'})
+
+    return decorated
 
 
 @app.shell_context_processor
@@ -159,7 +179,7 @@ def search():
         isbn = str(book_search.book_search.data)
         stmt = 'SELECT * FROM public.\"books\" WHERE isbn = :isbn'
         query = db.execute(stmt, {"isbn": isbn}).fetchone()
-        return render_template('book.html', query=query)
+        return render_template('search_result.html', query=query)
     return render_template('search.html', book_search=book_search)
 
 
@@ -168,3 +188,20 @@ def unauthorized():
     return render_template('unauthorized.html')
 
 
+@app.route('/api/v1/<int:isbn>')
+@auth_required
+def api_access(isbn):
+    stmt = 'SELECT * FROM public.\"books\" WHERE isbn=:isbn'
+    query = db.execute(stmt, {"isbn": str(isbn)}).fetchone()
+    print(query)
+    if query is not None:
+        return jsonify(
+            isbn=query['isbn'],
+            title=query['title'],
+            author=query['author'],
+            year=query['year']
+        )
+    else:
+        return jsonify(
+            message="No Book Like that in the Database"
+        )
