@@ -6,8 +6,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from sqlalchemy import create_engine
 from werkzeug.security import generate_password_hash, check_password_hash
-from wtforms import StringField, SubmitField, PasswordField
-from wtforms.validators import DataRequired, Email, NumberRange
+from wtforms import StringField, SubmitField, PasswordField, IntegerField, TextAreaField
+from wtforms.validators import DataRequired, Email, NumberRange, Length
 from flask_login import UserMixin
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -62,7 +62,10 @@ class Search(FlaskForm):
     submit = SubmitField('Search')
 
 
-# class Review(FlaskForm):
+class Review(FlaskForm):
+    rating = IntegerField('Enter your rating out of 5', validators=[NumberRange(min=0, max=5)])
+    review = TextAreaField('Enter your review here', validators=[Length(min=600, max=2000)])
+    submit = SubmitField('Submit Review')
 
 
 # Custom Decorator to require login for session
@@ -77,7 +80,6 @@ def login_required(f):
 
 
 # Custom Decorator to require login for user agent access through basic authentication
-
 def auth_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -183,12 +185,7 @@ def search():
     return render_template('search.html', book_search=book_search)
 
 
-@app.errorhandler(401)
-def unauthorized():
-    return render_template('unauthorized.html')
-
-
-@app.route('/api/v1/<int:isbn>')
+@app.route('/api/v1/isbn/<int:isbn>')
 @auth_required
 def api_access(isbn):
     stmt = 'SELECT * FROM public.\"books\" WHERE isbn=:isbn'
@@ -205,3 +202,29 @@ def api_access(isbn):
         return jsonify(
             message="No Book Like that in the Database"
         )
+
+
+@app.route('/review', methods=['GET', 'POST'])
+@login_required
+def review():
+    rev = Review()
+    if rev.validate_on_submit():
+        print(rev.review.data)
+        query_user = "SELECT * FROM public.\"Users\" WHERE username="+session.get('username')
+        res = db.execute(query_user)
+        print(res)
+        if res is not None:
+            query = "INSERT into public.\"reviews\" (id, rating, review, fk_isbn, fk_id) VALUES(:id, :rating, :review, :fk_isbn, :fk_id)"
+            res_insert = db.execute(query, {"id": random.randint(1, 10000), "rating": rev.rating.data, "review": rev.review.data, "fk_isbn": 1416949658, "fk_id": res['id']})
+            print("The result insert: ")
+            print(res_insert)
+        else:
+            return jsonify(
+                message="failed review submission"
+            )
+    return render_template('review.html', rev=rev)
+
+
+@app.errorhandler(401)
+def unauthorized():
+    return render_template('unauthorized.html')
