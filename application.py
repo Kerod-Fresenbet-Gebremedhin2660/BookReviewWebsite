@@ -204,24 +204,22 @@ def api_access(isbn):
         )
 
 
-@app.route('/review', methods=['GET', 'POST'])
+@app.route('/review/<isbn>', methods=['GET', 'POST'])
 @login_required
-def review():
+def review(isbn):
     rev = Review()
     if rev.validate_on_submit():
         print(rev.review.data)
-        query_user = "SELECT * FROM public.\"Users\" WHERE username="+session.get('username')
-        res = db.execute(query_user)
-        print(res)
+        query_user = "SELECT * FROM public.\"Users\" WHERE username=:username"
+        res = db.execute(query_user, {"username": session.get('username')}).fetchone()
         if res is not None:
             query = "INSERT into public.\"reviews\" (id, rating, review, fk_isbn, fk_id) VALUES(:id, :rating, :review, :fk_isbn, :fk_id)"
-            res_insert = db.execute(query, {"id": random.randint(1, 10000), "rating": rev.rating.data, "review": rev.review.data, "fk_isbn": 1416949658, "fk_id": res['id']})
-            print("The result insert: ")
-            print(res_insert)
+            fk_id = res['id']
+            db.execute(query, {"id": random.randint(1, 10000), "rating": rev.rating.data, "review": rev.review.data,
+                               "fk_isbn": isbn, "fk_id": fk_id})
+            db.commit()
         else:
-            return jsonify(
-                message="failed review submission"
-            )
+            return redirect(unauthorized)
     return render_template('review.html', rev=rev)
 
 

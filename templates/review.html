@@ -2,12 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Review</title>
 </head>
 <body>
-    {{ rev.rating.label }} {{ rev.rating  }}
-    <br>
-    {{ rev.review.label }} {{ rev.review }}
-    {{ rev.submit.label }} {{ rev.submit }}
+    <form method="post">
+        {{ rev.hidden_tag() }}
+        {{ rev.rating.label }} {{ rev.rating  }}
+        {{ rev.review.label }} {{ rev.review }}
+        {{ rev.submit() }}
+    </form>
+
 </body>
 </html>
