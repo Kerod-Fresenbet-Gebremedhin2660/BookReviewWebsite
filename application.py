@@ -1,5 +1,7 @@
 import os
 import random
+import requests
+import json
 from flask import Flask, render_template, session, flash, jsonify, url_for, redirect, request, make_response
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
@@ -102,6 +104,7 @@ def make_shell_context():
 
 
 @app.route('/')
+@app.route('/home')
 def landing_page():
     return render_template('landing_page.html')
 
@@ -179,10 +182,13 @@ def protected():
 def search():
     book_search = Search()
     if book_search.validate_on_submit():
+        open_lib_request = requests.get('https://openlibrary.org/api/books?bibkeys=ISBN:'+str(book_search.book_search.data)+'&jscmd=details&format=json').content
+        open_lib_request = json.loads(open_lib_request.decode('utf-8'))
+        open_lib_request = open_lib_request.get('ISBN:'+str(book_search.book_search.data))
         isbn = str(book_search.book_search.data)
         stmt = 'SELECT * FROM public.\"books\" WHERE isbn = :isbn'
         query = db.execute(stmt, {"isbn": isbn}).fetchone()
-        return render_template('search_result.html', query=query)
+        return render_template('search.html', book_search=book_search, query=query, open_lib_request=open_lib_request)
     return render_template('search.html', book_search=book_search)
 
 

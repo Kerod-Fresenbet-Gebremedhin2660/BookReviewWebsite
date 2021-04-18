@@ -16,3 +16,5 @@ psycopg2-binary==2.8.6
 SQLAlchemy==1.4.6
 Werkzeug==1.0.1
 WTForms==2.3.3
+
+requests~=2.25.1

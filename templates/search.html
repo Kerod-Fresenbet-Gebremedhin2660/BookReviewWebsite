@@ -1,92 +1,154 @@
-{% extends 'base.html' %}
-    {% block head %}
-        {{ super() }}
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css"
-    />
-    <link rel="stylesheet" href="../static/css/style_2.css" />
-        <title>Search</title>
-    {% endblock %}
-
-  {% block body %}
-      {{ super() }}
-      <div class="contain">
+{% extends 'base.html' %} {% block head %} {{ super() }}
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css"
+/>
+<link rel="stylesheet" href="../static/css/style_2.css" />
+<title>Search</title>
+{% endblock %} {% block body %} {{ super() }}
+<div class="contain">
   <form method="post">
-      {{ book_search.hidden_tag() }}
-      <h1>Search</h1>
-      <div class="formcontainer">
-      <hr/>
-      <div class="container">
-        <label for="uname" style="color: black; font-weight: bold; font-size: larger"><strong>ISBN</strong></label>
-        {{ book_search.book_search }}
-      <button type="submit">{{ book_search.submit(id='sub') }}</button>
+    {{ book_search.hidden_tag() }}
+    <h1>Search</h1>
+    <div class="formcontainer">
+      <hr />
+      <hr />
+      <div class="inline">
+        <span class="container">
+          <label
+            for="uname"
+            style="color: black; font-weight: bold; font-size: larger"
+            ><strong>ISBN</strong></label
+          >
+          {{ book_search.book_search }}
+        </span>
+        <span
+          ><button type="submit">
+            {{ book_search.submit(id='sub') }}
+          </button></span
+        >
       </div>
-      </div></form>
-      </div>
+    </div>
+  </form>
+</div>
+<div style="background-color: transparent" class="result">{% if query and open_lib_request %}
+    </div>
+<div class="card">
+  <img src="{{ open_lib_request['thumbnail_url'] }}" id="card" alt="Avatar" style="width: 100%" />
+  <div class="container">
+    <h4><b>{{ query['author'] }}</b></h4>
+    <p>{{ query['title'] }}</p>
+      <a href="{{ open_lib_request['info_url'] }}" style="text-decoration: none">More Info</a>
+  </div>
+</div>
+{% else %}
+<div></div>
+{% endif %}
 
-
-  <style>
-  #sub{
-      background-color: inherit;
-      border: none;
-      outline: none;
+<style>
+  .card {
+    /* Add shadows to create the "card" effect */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    margin-left: 40%;
+    margin-right: 40%;
   }
-    body {
-      background-image: url("../static/cool_bg.jpg");
-      background-repeat: no-repeat;
-      background-size: cover;
-    }
-    .contain {
-      display: flex;
-        align-items: center;
-        justify-content: center;
 
-    } form {
-      border: 5px solid #f1f1f1;
-      }
-      input[type=text], input[type=password] {
-      width: 100%;
-      padding: 16px 8px;
-      margin: 8px 0;
-      display: inline-block;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-      }
-      button {
-      background-color: #8ebf42;
-      color: white;
-      padding: 14px 0;
-      margin: 10px 0;
-      border: none;
-      cursor: grabbing;
-      width: 100%;
-      }
-      h1 {
-      text-align:center;
-      fone-size:18;
-      }
-      button:hover {
-      opacity: 0.8;
-      }
-      .formcontainer {
-      text-align: left;
-      margin: 24px 50px 12px;
-      }
-      .container {
-      padding: 16px 0;
-      text-align:left;
-      }
-      span.psw {
-      float: right;
-      padding-top: 0;
-      padding-right: 15px;
-      }
-      /* Change styles for span on extra small screens */
-      @media screen and (max-width: 300px) {
-      span.psw {
+  /* On mouse-over, add a deeper shadow */
+  .card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  /* Add some padding inside the card container */
+  .container {
+    padding: 2px 16px;
+  }
+  .card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    border-radius: 5px; /* 5px rounded corners */
+  }
+
+  /* Add rounded corners to the top left and the top right corner of the image */
+  #card {
+    border-radius: 5px 5px 0 0;
+  }
+  .result {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 5%;
+    margin-left: 40%;
+    margin-right: 40%;
+  }
+  .inline {
+    display: inline;
+  }
+  #sub {
+    background-color: inherit;
+    border: none;
+    outline: none;
+  }
+  body {
+    background-image: url("../static/books_search.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  .contain {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  form {
+    border: 5px solid #f1f1f1;
+    margin-top: 0;
+  }
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 16px 8px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+  button {
+    background-color: #8ebf42;
+    color: white;
+    padding: 14px 0;
+    margin: 10px 0;
+    border: none;
+    cursor: grabbing;
+    width: 100%;
+  }
+  h1 {
+    text-align: center;
+    fone-size: 18;
+    font-weight: bold;
+    background-color: black;
+  }
+  button:hover {
+    opacity: 0.8;
+  }
+  .formcontainer {
+    text-align: left;
+    margin: 0px 50px 12px;
+  }
+  .container {
+    padding: 16px 0;
+    text-align: left;
+  }
+  span.psw {
+    float: right;
+    padding-top: 0;
+    padding-right: 15px;
+  }
+  /* Change styles for span on extra small screens */
+  @media screen and (max-width: 300px) {
+    span.psw {
       display: block;
       float: none;
-      }
-    </style>
+    }
+  }
+</style>
 {% endblock %}
