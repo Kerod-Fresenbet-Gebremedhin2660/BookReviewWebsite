@@ -1,34 +1,165 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
+{% extends 'base.html' %} {% block title %}Landing Page{% endblock %} {% block
+body %} {{ super() }}
 <div>
-        <span style="text-align: center;">This is the landing page</span>
+  <p class="line-1 anim-typewriter">
+      <em>Outside of a dog, a book is a man's best friend</em>
+  </p>
+  <br />
+  <p class="line-2 anim-typewriter" style="">
+    Welcome to the WASHERA Book Center
+  </p>
+</div>
+<div class="cont">
+  <div class="perspective-text">
+    <div class="perspective-line">
+      <p></p>
+      <p>Books</p>
     </div>
-
-    <div class="buttons">
-        <button>
-            <a href="{{ url_for('login') }}"> Login </a>
-        </button>
-        <button>
-            <a href="{{ url_for('sign_up') }}"> Sign Up</a>
-        </button>
+    <div class="perspective-line">
+      <p>Are</p>
+      <p>A</p>
     </div>
-
+    <div class="perspective-line">
+      <p>Way</p>
+      <p>Of</p>
+    </div>
+    <div class="perspective-line">
+      <p>Of</p>
+      <p>Life</p>
+    </div>
+    <div class="perspective-line">
+      <p>Life</p>
+      <p></p>
+    </div>
+  </div>
+</div>
 <style>
-    .buttons{
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(50,50);
-        color: #ff0000;
+  body {
+    background-image: url("../static/bg_3.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  /* Google Fonts */
+
+  /* Global */
+  html {
+    min-height: 100%;
+    overflow: hidden;
+  }
+  body {
+    height: calc(100vh - 8em);
+    padding: 4em;
+    color: rgba(255, 255, 255, 0.75);
+    font-family: "Anonymous Pro", monospace;
+    background-color: rgb(25, 25, 25);
+  }
+  .line-1 {
+    position: relative;
+    top: 50%;
+    width: 24em;
+    margin: 0 auto;
+    border-right: 2px solid rgba(255, 255, 255, 0.75);
+    font-size: 180%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    transform: translateY(-50%);
+  }
+  .line-2 {
+    position: relative;
+    top: 50%;
+    width: 24em;
+    margin: 0 auto;
+    border-right: 2px solid rgba(255, 255, 255, 0.75);
+    font-size: 180%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    transform: translateY(-50%);
+  }
+
+  /* Animation */
+  .anim-typewriter {
+    animation: typewriter 4s steps(46) 1s 1 normal both,
+      blinkTextCursor 500ms steps(46) infinite normal;
+  }
+  @keyframes typewriter {
+    from {
+      width: 0;
     }
+    to {
+      width: 30em;
+    }
+  }
+  @keyframes blinkTextCursor {
+    from {
+      border-right-color: rgba(255, 255, 255, 0.75);
+    }
+    to {
+      border-right-color: transparent;
+    }
+  }
+  .cont {
+    display: flex;
+    margin-left: 250px;
+    margin-right: auto;
+    margin-top: 250px;
+  }
+  .perspective-text {
+    color: white;
+    font-family: Arial;
+    font-size: 58px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    text-transform: uppercase;
+  }
+
+  .perspective-line {
+    height: 50px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  p {
+    margin: 0;
+    height: 50px;
+    line-height: 50px;
+    transition: all 0.5s ease-in-out;
+  }
+
+  .perspective-line:nth-child(odd) {
+    transform: skew(60deg, -30deg) scaleY(0.667);
+  }
+
+  .perspective-line:nth-child(even) {
+    transform: skew(0deg, -30deg) scaleY(1.337);
+  }
+
+  .perspective-text:hover p {
+    transform: translate(0, -50px);
+  }
+
+  .perspective-line:nth-child(1) {
+    left: 29px;
+  }
+
+  .perspective-line:nth-child(2) {
+    left: 58px;
+    background: #f07e6e;
+  }
+
+  .perspective-line:nth-child(3) {
+    left: 87px;
+    background: #84cdfa;
+  }
+
+  .perspective-line:nth-child(4) {
+    left: 116px;
+    background: #5ad1cd;
+  }
+
+  .perspective-line:nth-child(5) {
+    left: 145px;
+  }
 </style>
-</body>
-</html>
+{% endblock %}
