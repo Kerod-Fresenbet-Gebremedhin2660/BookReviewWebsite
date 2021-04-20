@@ -15,11 +15,25 @@
       <hr />
       <div class="inline">
         <span class="container">
-          <label
-            for="uname"
-            style="color: black; font-weight: bold; font-size: larger"
-            ><strong>ISBN</strong></label
+          <div
+            style="
+              background-color: rgba(255, 255, 255, 0.7);
+              border: black 0.1em solid;
+              padding: 0.5em;
+              border-radius: 0.3em;
+            "
           >
+            {{ book_search.radio_field.label(style='color:black; font-size: large; font-weight:bolder;') }}
+          <br>
+              {% for subfield in book_search.radio_field %}
+                  <br>
+                  {{ subfield }}
+               {{
+            subfield.label(style='color:black; font-size: large; font-weight:bolder;') }}
+
+            {% endfor %}
+
+          </div>
           {{ book_search.book_search }}
         </span>
         <span
@@ -31,27 +45,73 @@
     </div>
   </form>
 </div>
-<div style="background-color: transparent" class="result">{% if query and open_lib_request %}
-    </div>
-<div class="card">
-  <img src="{{ open_lib_request['thumbnail_url'] }}" id="card" alt="Avatar" style="width: 100%" />
-  <div class="container">
-    <h4><b>{{ query['author'] }}</b></h4>
-    <p>{{ query['title'] }}</p>
-      <a href="{{ open_lib_request['info_url'] }}" style="text-decoration: none">More Info</a>
+{% if query and open_lib_request %}
+  <div class="table-wrapper">
+    <table class="fl-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Published On</th>
+          <th>Publishers</th>
+            {% if book_search.radio_field.data == 'AUTHOR' or book_search.radio_field.data == 'TITLE' %}
+          <th>EDITION COUNT</th>
+                {% else %}
+                <th>NUMBER OF PAGES</th>
+                {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-size: x-large">{{ query['title'] }}</td>
+          <td style="font-size: x-large">{{ query['author'] }}</td>
+          <td style="font-size: x-large">{{ query['year'] }}</td>
+          <td style="font-size: x-large">{{ pub }}</td>
+          <td style="font-size: x-large">{{ nop }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-</div>
-{% else %}
-<div></div>
-{% endif %}
+    <div style="display: flex; align-items: center; justify-content: center; background-color: rgba(0,0,0, 0.8); border-radius: 2px; margin-right: 43%; margin-left: 43%; border: 0.2em solid black; margin-bottom: 5%">
+        <a href="" style="text-decoration:none;">MORE DETAILS</a>
+    </div>
+  {% else %} {% endif %}
 
+  <!-- https://images.unsplash.com/photo-1520839090488-4a6c211e2f94?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=38951b8650067840307cba514b554ba5&auto=format&fit=crop&w=1350&q=80 -->
+</section>
+{#
+<div class="searchBox">
+  #} {#
+  <form>#} {##} {#</form>
+  #} {# <input class="searchInput" type="text" name="" placeholder="Search" />#}
+  {#
+  <button class="searchButton" href="#">
+    #} {# <i class="material-icons">#} {# search#} {# </i>#} {#</button
+  >#} {#
+</div>
+#}
 <style>
+  :root {
+    --color: #3c3163;
+    --transition-time: 0.5s;
+    --primary-c: #2196f3;
+    --secondary-c: #b2d7f5;
+
+    --white: #fdfbfb;
+
+    --text: #082943;
+    --bg: var(--primary-c);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
   .card {
     /* Add shadows to create the "card" effect */
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     transition: 0.3s;
-    margin-left: 40%;
-    margin-right: 40%;
+    margin-left: 35%;
+    margin-right: 35%;
   }
 
   /* On mouse-over, add a deeper shadow */
@@ -60,7 +120,7 @@
   }
 
   /* Add some padding inside the card container */
-  .container {
+  .holder {
     padding: 2px 16px;
   }
   .card {
@@ -134,7 +194,7 @@
     text-align: left;
     margin: 0px 50px 12px;
   }
-  .container {
+  .holder {
     padding: 16px 0;
     text-align: left;
   }
@@ -149,6 +209,369 @@
       display: block;
       float: none;
     }
+  }
+  /**Search CSS */
+  .searchBox {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 50%);
+    background: #2f3640;
+    height: 40px;
+    border-radius: 40px;
+    padding: 10px;
+  }
+
+  .searchBox:hover > .searchInput {
+    width: 240px;
+    padding: 0 6px;
+  }
+
+  .searchBox:hover > .searchButton {
+    background: white;
+    color: #2f3640;
+  }
+
+  .searchButton {
+    color: white;
+    float: right;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #2f3640;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.4s;
+  }
+
+  .searchInput {
+    border: none;
+    background: none;
+    outline: none;
+    float: left;
+    padding: 0;
+    color: white;
+    font-size: 16px;
+    transition: 0.4s;
+    line-height: 40px;
+    width: 0px;
+  }
+
+  @media screen and (max-width: 620px) {
+    .searchBox:hover > .searchInput {
+      width: 150px;
+      padding: 0 6px;
+    }
+  }
+  /*Card CSS*/
+  a {
+    color: inherit;
+  }
+
+  .cards-wrapper {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 4rem;
+    padding: 4rem;
+    margin: 0 auto;
+    width: max-content;
+  }
+
+  .card {
+    font-family: "Heebo";
+    --bg-filter-opacity: 0.5;
+    background-image: linear-gradient(
+        rgba(0, 0, 0, var(--bg-filter-opacity)),
+        rgba(0, 0, 0, var(--bg-filter-opacity))
+      ),
+      var(--bg-img);
+    height: 20em;
+    width: 15em;
+    font-size: 1.5em;
+    color: white;
+    border-radius: 1em;
+    padding: 1em;
+    /*margin: 2em;*/
+    display: flex;
+    align-items: flex-end;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 0 5em -1em black;
+    transition: all, var(--transition-time);
+    position: relative;
+    overflow: hidden;
+    border: 10px solid #ccc;
+    text-decoration: none;
+  }
+
+  .card:hover {
+    transform: rotate(0);
+  }
+
+  .card h1 {
+    margin: 0;
+    font-size: 1.5em;
+    line-height: 1.2em;
+  }
+
+  .card p {
+    font-size: 0.75em;
+    font-family: "Open Sans";
+    margin-top: 0.5em;
+    line-height: 2em;
+  }
+
+  .card .tags {
+    display: flex;
+  }
+
+  .card .tags .tag {
+    font-size: 0.75em;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 0.3rem;
+    padding: 0 0.5em;
+    margin-right: 0.5em;
+    line-height: 1.5em;
+    transition: all, var(--transition-time);
+  }
+
+  .card:hover .tags .tag {
+    background: var(--color);
+    color: white;
+  }
+
+  .card .date {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 0.75em;
+    padding: 1em;
+    line-height: 1em;
+    opacity: 0.8;
+  }
+
+  .card:before,
+  .card:after {
+    content: "";
+    transform: scale(0);
+    transform-origin: top left;
+    border-radius: 50%;
+    position: absolute;
+    left: -50%;
+    top: -50%;
+    z-index: -5;
+    transition: all, var(--transition-time);
+    transition-timing-function: ease-in-out;
+  }
+
+  .card:before {
+    background: #ddd;
+    width: 250%;
+    height: 250%;
+  }
+
+  .card:after {
+    background: white;
+    width: 200%;
+    height: 200%;
+  }
+
+  .card:hover {
+    color: var(--color);
+  }
+
+  .card:hover:before,
+  .card:hover:after {
+    transform: scale(1);
+  }
+
+  .card-grid-space .num {
+    font-size: 3em;
+    margin-bottom: 1.2rem;
+    margin-left: 1rem;
+  }
+
+  .info {
+    font-size: 1.2em;
+    display: flex;
+    padding: 1em 3em;
+    height: 3em;
+  }
+
+  .info img {
+    height: 3em;
+    margin-right: 0.5em;
+  }
+
+  .info h1 {
+    font-size: 1em;
+    font-weight: normal;
+  }
+
+  /* MEDIA QUERIES */
+  @media screen and (max-width: 1285px) {
+    .cards-wrapper {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media screen and (max-width: 900px) {
+    .cards-wrapper {
+      grid-template-columns: 1fr;
+    }
+    .info {
+      justify-content: center;
+    }
+    .card-grid-space .num {
+      /margin-left: 0;
+      /text-align: center;
+    }
+  }
+
+  @media screen and (max-width: 500px) {
+    .cards-wrapper {
+      padding: 4rem 2rem;
+    }
+    .card {
+      max-width: calc(100vw - 4rem);
+    }
+  }
+
+  @media screen and (max-width: 450px) {
+    .info {
+      display: block;
+      text-align: center;
+    }
+    .info h1 {
+      margin: 0;
+    }
+  }
+  /* Table Styles */
+
+  .table-wrapper {
+    margin: 10px 70px 70px;
+    box-shadow: 0px 35px 50px rgba(0, 0, 0, 0.2);
+  }
+
+  .fl-table {
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: normal;
+    border: none;
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 100%;
+    white-space: nowrap;
+    background-color: white;
+  }
+
+  .fl-table td,
+  .fl-table th {
+    text-align: center;
+    padding: 8px;
+  }
+
+  .fl-table td {
+    border-right: 1px solid rgba(0, 0, 0, 1);
+    font-size: 12px;
+    color: rgba(0, 0, 0, 1);
+  }
+
+  .fl-table thead th {
+    color: rgba(0, 0, 0, 1);
+    background: rgb(142, 191, 66);
+    font-size: xx-large;
+    text-transform: uppercase;
+  }
+
+  .fl-table thead th:nth-child(odd) {
+    color: #ffffff;
+    background: rgb(0, 0, 0);
+    font-size: xx-large;
+  }
+
+  .fl-table tr:nth-child(even) {
+    background: #f8f8f8;
+  }
+  .f1-table td {
+    font-size: x-large;
+  }
+
+  /* Responsive */
+
+  @media (max-width: 767px) {
+    .fl-table {
+      display: block;
+      width: 100%;
+    }
+    .table-wrapper:before {
+      content: "Scroll horizontally >";
+      display: block;
+      text-align: right;
+      font-size: 11px;
+      color: white;
+      padding: 0 0 10px;
+    }
+    .fl-table thead,
+    .fl-table tbody,
+    .fl-table thead th {
+      display: block;
+    }
+    .fl-table thead th:last-child {
+      border-bottom: none;
+    }
+    .fl-table thead {
+      float: left;
+    }
+    .fl-table tbody {
+      width: auto;
+      position: relative;
+      overflow-x: auto;
+    }
+    .fl-table td,
+    .fl-table th {
+      padding: 20px 0.625em 0.625em 0.625em;
+      height: 60px;
+      vertical-align: middle;
+      box-sizing: border-box;
+      overflow-x: hidden;
+      overflow-y: auto;
+      width: 120px;
+      font-size: 13px;
+      text-overflow: ellipsis;
+    }
+    .fl-table thead th {
+      text-align: left;
+      border-bottom: 1px solid #f7f7f9;
+    }
+    .fl-table tbody tr {
+      display: table-cell;
+    }
+    .fl-table tbody tr:nth-child(odd) {
+      background: none;
+    }
+    .fl-table tr:nth-child(even) {
+      background: transparent;
+    }
+    .fl-table tr td:nth-child(odd) {
+      background: #f8f8f8;
+      border-right: 1px solid #e6e4e4;
+    }
+    .fl-table tr td:nth-child(even) {
+      border-right: 1px solid #e6e4e4;
+    }
+    .fl-table tbody td {
+      display: block;
+      text-align: center;
+    }
+  }
+  #radio_field_label {
+    color: black;
+    font-size: large;
+    font-weight: bold;
   }
 </style>
 {% endblock %}

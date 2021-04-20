@@ -1,16 +1,97 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Review</title>
-</head>
-<body>
-    <form method="post">
-        {{ rev.hidden_tag() }}
-        {{ rev.rating.label }} {{ rev.rating  }}
-        {{ rev.review.label }} {{ rev.review }}
-        {{ rev.submit() }}
-    </form>
+{% extends 'base.html' %} {% block head %}<meta charset="UTF-8" />
+<title>Review</title>{% endblock %} {% block body %}
+<div class="contain">
+  <form method="post">
+    {{ rev.hidden_tag() }}
+      <div style="background-color: rgba(255,255,255,0.7); margin-left: 2%; margin-right: 2%;">
+          <h1>REVIEW</h1>
+      </div>
 
-</body>
-</html>
+    <div class="formcontainer">
+      <hr />
+      <div class="container">
+        <label
+          for="uname"
+          style="color: black; font-weight: bold; font-size: larger"
+          ><strong>RATING</strong></label
+        >
+        {{ rev.rating(style="background-color: rgba(255,255,255,0.8);", placeholder="Rate out of 5") }}
+
+        {{ rev.review(placeholder = "Write the Review here ...", id="review") }}
+      </div><hr />
+      <button type="submit">{{ rev.submit(id='sub') }}</button>
+    </div>
+  </form>
+</div>
+<style>
+#review{
+    resize: none;
+    width: 98.6%;
+    height: 20em;
+    background-color: rgba(255,255,255,0.8);
+}
+  #sub {
+    background-color: inherit;
+    border: none;
+    outline: none;
+  }
+  body {
+    background-image: url("../static/review.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  .contain {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  form {
+    border: 5px solid #f1f1f1;
+  }
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 16px 8px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+  button {
+    background-color: #8ebf42;
+    color: white;
+    padding: 14px 0;
+    margin: 10px 0;
+    border: none;
+    cursor: grabbing;
+    width: 100%;
+  }
+  h1 {
+    text-align: center;
+    fone-size: 18;
+  }
+  button:hover {
+    opacity: 0.8;
+  }
+  .formcontainer {
+    text-align: left;
+    margin: 24px 50px 12px;
+  }
+  .holder {
+    padding: 16px 0;
+    text-align: left;
+  }
+  span.psw {
+    float: right;
+    padding-top: 0;
+    padding-right: 15px;
+  }
+  /* Change styles for span on extra small screens */
+  @media screen and (max-width: 300px) {
+    span.psw {
+      display: block;
+      float: none;
+    }
+  }
+</style>
+{% endblock %}

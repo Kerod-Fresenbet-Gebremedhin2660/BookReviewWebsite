@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from sqlalchemy import create_engine
 from werkzeug.security import generate_password_hash, check_password_hash
-from wtforms import StringField, SubmitField, PasswordField, IntegerField, TextAreaField
+from wtforms import StringField, SubmitField, PasswordField, IntegerField, TextAreaField, RadioField
 from wtforms.validators import DataRequired, Email, NumberRange, Length
 from flask_login import UserMixin
 from sqlalchemy import create_engine
@@ -61,6 +61,7 @@ class NameForm(FlaskForm):
 
 
 class Search(FlaskForm):
+    radio_field = RadioField(label='Search By', choices=[('ISBN', 'ISBN'), ('TITLE', 'TITLE'), ('AUTHOR', 'AUTHOR')])
     book_search = StringField('Search for Book using ISBN', validators=[DataRequired()])
     submit = SubmitField('Search')
 
@@ -151,7 +152,8 @@ def login():
                 session['logged_in'] = True
                 name_form.email.data = ''
                 name_form.password.data = ''
-                return render_template('protected.html', check="New Login")
+                # return render_template('protected.html', check="New Login")
+                return redirect(url_for('search', check="New Login"))
             else:
                 name_form.email.data = ''
                 name_form.password.data = ''
@@ -182,15 +184,68 @@ def protected():
 def search():
     book_search = Search()
     if book_search.validate_on_submit():
-        open_lib_request = requests.get('https://openlibrary.org/api/books?bibkeys=ISBN:'+str(book_search.book_search.data)+'&jscmd=details&format=json').content
-        open_lib_request = json.loads(open_lib_request.decode('utf-8'))
-        open_lib_request = open_lib_request.get('ISBN:'+str(book_search.book_search.data))
-        isbn = str(book_search.book_search.data)
-        stmt = 'SELECT * FROM public.\"books\" WHERE isbn = :isbn'
-        query = db.execute(stmt, {"isbn": isbn}).fetchone()
-        return render_template('search.html', book_search=book_search, query=query, open_lib_request=open_lib_request)
+        search_by = book_search.radio_field.data
+        if search_by == 'ISBN':
+            open_lib_request = requests.get('https://openlibrary.org/api/books?bibkeys=ISBN:' + str(
+                book_search.book_search.data) + '&jscmd=details&format=json').content
+            open_lib_request = json.loads(open_lib_request.decode('utf-8'))
+            open_lib_request = open_lib_request.get('ISBN:' + str(book_search.book_search.data))
+            publishers = str(open_lib_request['details']['publishers']).strip("['']")
+            nop = str(open_lib_request['details']['number_of_pages']).strip("['']")
+            open_lib_cover = "http://covers.openlibrary.org/b/isbn/" + str(book_search.book_search.data) + "-L.jpg"
+
+            isbn = str(book_search.book_search.data) + '%'
+            stmt = 'SELECT * FROM public.\"books\" WHERE isbn LIKE :isbn'
+            try:
+                query = db.execute(stmt, {"isbn": isbn}).fetchall()
+            except:
+                return jsonify(
+                    message="The sql could not be processed"
+                )
+            return render_template('search.html', book_search=book_search, query=query,
+                                   open_lib_request=open_lib_request, olc=open_lib_cover, pub=publishers, nop=nop)
+        elif search_by == 'AUTHOR':
+            author = str(book_search.book_search.data)
+            stmt = 'SELECT * FROM public.\"books\" WHERE author = :author'
+            try:
+                query = db.execute(stmt, {"author": author}).fetchone()
+            except SystemError:
+                return render_template('unauthorized.html')
+            open_lib_request = requests.get(
+                'http://openlibrary.org/search.json?author=' + str(book_search.book_search.data)).content
+            open_lib_request = json.loads(open_lib_request.decode('utf-8'))
+            open_lib_request = open_lib_request.get('docs')
+            publishers = str(open_lib_request[0]['first_publish_year'])
+            nop = str(open_lib_request[0]['edition_count'])
+            open_lib_cover = "http://covers.openlibrary.org/b/isbn/" + str(query['isbn']) + "-L.jpg"
+            return render_template('search.html', book_search=book_search, query=query,
+                                   open_lib_request=open_lib_request, olc=open_lib_cover, pub=publishers, nop=nop)
+        elif search_by == 'TITLE':
+            title = str(book_search.book_search.data)
+            stmt = 'SELECT * FROM public.\"books\" WHERE title = :title'
+            try:
+                query = db.execute(stmt, {"title": title}).fetchone()
+            except:
+                return render_template('unauthorized.html')
+            open_lib_request = requests.get(
+                'http://openlibrary.org/search.json?title=' + str(book_search.book_search.data)).content
+            open_lib_request = json.loads(open_lib_request.decode('utf-8'))
+            open_lib_request = open_lib_request.get('docs')
+            publishers = str(open_lib_request[0]['publisher'][0])
+            nop = str(open_lib_request[0]['edition_count'])
+            open_lib_cover = "http://covers.openlibrary.org/b/isbn/" + str(query['isbn']) + "-L.jpg"
+            return render_template('search.html', book_search=book_search, query=query,
+                                   open_lib_request=open_lib_request, olc=open_lib_cover, pub=publishers, nop=nop)
+
     return render_template('search.html', book_search=book_search)
 
+
+# @app.route('/details/<int:isbn>', methods=['GET', 'POST'])
+# @login_required
+# def details():
+
+
+# :TODO Make sure to test the search feature
 
 @app.route('/api/v1/isbn/<int:isbn>')
 @auth_required
@@ -225,11 +280,13 @@ def review(isbn):
             db.execute(query, {"id": random.randint(1, 10000), "rating": rev.rating.data, "review": rev.review.data,
                                "fk_isbn": isbn, "fk_id": fk_id})
             db.commit()
+            flash("Successful")
         else:
             return redirect(unauthorized)
     return render_template('review.html', rev=rev)
 
 
+# :TODO Make this better
 @app.errorhandler(401)
 def unauthorized():
     return render_template('unauthorized.html')
