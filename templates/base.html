@@ -1,4 +1,3 @@
-{% extends "bootstrap/base.html" %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -31,14 +30,14 @@
         >
         <a href="{{ url_for('login') }}">SignIn</a>
         <a href="{{ url_for('sign_up') }}">SignUp</a>
-
+        <a href="{{ url_for('search') }}">Search</a>
       </div>
 
       <!-- Use any element to open the sidenav -->
       <div class="holder" onclick="openNav()">
-        <div class="bar1"></div>
-        <div class="bar2"></div>
-        <div class="bar3"></div>
+        <div class="bar1 bar"></div>
+        <div class="bar2 bar"></div>
+        <div class="bar3 bar"></div>
       </div>
       {% endblock %}
     </nav>
@@ -49,6 +48,7 @@
         document.getElementById("mySidenav").style.width = "250px";
         document.getElementById("main").style.marginLeft = "250px";
         document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+        document.getElementsByClassName("bar").style.visibility = "hidden";
       }
 
       /* Set the width of the side navigation to 0 and the left margin of the page content to 0, and the background color of body to white */
@@ -71,7 +71,7 @@
         z-index: 1; /* Stay on top */
         top: 0; /* Stay at the top */
         left: 0;
-        background-color: rgba(220,220,220,0.1); /* Black*/
+        background-color: rgba(220, 220, 220, 0.1); /* Black*/
         overflow-x: hidden; /* Disable horizontal scroll */
         padding-top: 60px; /* Place content 60px from the top */
         transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
@@ -82,7 +82,7 @@
         padding: 8px 8px 8px 32px;
         text-decoration: none;
         font-size: 25px;
-        color: rgb(255,255,255);
+        color: rgb(255, 255, 255);
         display: block;
         transition: 0.3s;
       }
@@ -148,6 +148,6 @@
         transform: rotate(45deg) translate(-8px, -8px);
       }
     </style>
-  {% endblock %}
+    {% endblock %}
   </body>
 </html>

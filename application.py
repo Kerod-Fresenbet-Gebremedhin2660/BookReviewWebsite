@@ -233,16 +233,25 @@ def search():
             open_lib_request = open_lib_request.get('docs')
             publishers = str(open_lib_request[0]['publisher'][0])
             nop = str(open_lib_request[0]['edition_count'])
-            open_lib_cover = "http://covers.openlibrary.org/b/isbn/" + str(query['isbn']) + "-L.jpg"
             return render_template('search.html', book_search=book_search, query=query,
-                                   open_lib_request=open_lib_request, olc=open_lib_cover, pub=publishers, nop=nop)
+                                   open_lib_request=open_lib_request, pub=publishers, nop=nop)
 
     return render_template('search.html', book_search=book_search)
 
 
-# @app.route('/details/<int:isbn>', methods=['GET', 'POST'])
-# @login_required
-# def details():
+@app.route('/details/<int:isbn>', methods=['GET', 'POST'])
+@login_required
+def details(isbn):
+    rev = Review()
+    open_lib_cover = "http://covers.openlibrary.org/b/isbn/" + str(isbn) + "-L.jpg"
+    first_sentence = requests.get("https://openlibrary.org/api/books?bibkeys=ISBN:"+str(isbn)+"&jscmd=details&format=json").content
+    first_sentence = json.loads(first_sentence.decode('utf-8'))
+    first_sentence = first_sentence.get('ISBN:'+str(isbn))
+    first_sentence = first_sentence.get('details')
+    title = first_sentence.get('title')
+    first_sentence = first_sentence.get('first_sentence')
+    first_sentence = first_sentence.get('value')
+    return render_template('review.html', olc=open_lib_cover, fs=first_sentence, rev=rev, title=title)
 
 
 # :TODO Make sure to test the search feature

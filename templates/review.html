@@ -1,35 +1,58 @@
 {% extends 'base.html' %} {% block head %}<meta charset="UTF-8" />
-<title>Review</title>{% endblock %} {% block body %}
-<div class="contain">
-  <form method="post">
-    {{ rev.hidden_tag() }}
-      <div style="background-color: rgba(255,255,255,0.7); margin-left: 2%; margin-right: 2%;">
-          <h1>REVIEW</h1>
+<title>Review</title>{% endblock %} {% block body %} {{ super() }}
+<div class="wrapwrapper">
+{% if olc and title and fs %}
+        <div style="display: flex; align-items: center; justify-content: center; margin-top: 2%;">
+        <img src="{{ olc }}" alt="">
+        <div>
+            <h1 style="background-color: white">
+                {{ title }}
+            </h1>
+            {{ fs }}
+        </div>
+    </div>
+    {% else %}
+    {% endif %}
+  <div class="contain" style="margin-bottom: 20%">
+    <form method="post">
+      {{ rev.hidden_tag() }}
+      <div
+        style="
+          background-color: rgba(255, 255, 255, 0.7);
+          margin-left: 2%;
+          margin-right: 2%;
+        "
+      >
+        <h1>REVIEW</h1>
       </div>
 
-    <div class="formcontainer">
-      <hr />
-      <div class="container">
-        <label
-          for="uname"
-          style="color: black; font-weight: bold; font-size: larger"
-          ><strong>RATING</strong></label
-        >
-        {{ rev.rating(style="background-color: rgba(255,255,255,0.8);", placeholder="Rate out of 5") }}
+      <div class="formcontainer">
+        <hr />
+        <div class="container">
+          <label
+            for="uname"
+            style="color: black; font-weight: bold; font-size: larger"
+            ><strong>RATING</strong></label
+          >
+          {{ rev.rating(style="background-color: rgba(255,255,255,0.8);",
+          placeholder="Rate out of 5") }} {{ rev.review(placeholder = "Write the Review here ...", id="review") }}
+        </div>
+        <hr />
+        <button type="submit">{{ rev.submit(id='sub') }}</button>
+      </div>
+    </form>
+  </div>
 
-        {{ rev.review(placeholder = "Write the Review here ...", id="review") }}
-      </div><hr />
-      <button type="submit">{{ rev.submit(id='sub') }}</button>
-    </div>
-  </form>
+
 </div>
+
 <style>
-#review{
+  #review {
     resize: none;
     width: 98.6%;
     height: 20em;
-    background-color: rgba(255,255,255,0.8);
-}
+    background-color: rgba(255, 255, 255, 0.8);
+  }
   #sub {
     background-color: inherit;
     border: none;
@@ -75,7 +98,6 @@
   }
   .formcontainer {
     text-align: left;
-    margin: 24px 50px 12px;
   }
   .holder {
     padding: 16px 0;
@@ -92,6 +114,9 @@
       display: block;
       float: none;
     }
+  }
+  .sidenav {
+    background-color: rgba(0, 0, 0, 0.7);
   }
 </style>
 {% endblock %}
