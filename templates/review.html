@@ -1,18 +1,30 @@
-{% extends 'base.html' %} {% block head %}<meta charset="UTF-8" />
-<title>Review</title>{% endblock %} {% block body %} {{ super() }}
+{% extends 'base.html' %} {% block head %}
+    {{ super() }}
+    <meta charset="UTF-8" />
+    <title>
+    Review
+    </title>
+{% endblock %} {% block body %} {{ super() }}
 <div class="wrapwrapper">
-{% if olc and title and fs %}
-        <div style="display: flex; align-items: center; justify-content: center; margin-top: 2%;">
-        <img src="{{ olc }}" alt="">
-        <div>
-            <h1 style="background-color: white">
-                {{ title }}
-            </h1>
-            {{ fs }}
-        </div>
+  {% if dt %}
+  <div
+    style="
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2%;
+    "
+  >
+    <div class="details" style="margin-bottom: 1%">
+
+      <img src="{{ dt['olc'] }}" alt="Cover Art to be displayed here!" class="olc" />
+      <div style="margin-left: 1%">
+        <h1 style="background-color: rgba(255,255,255,0.7); padding: 2% ">{{ dt['title'] }}</h1>
+        <h2 style="background-color: rgba(255,255,255,0.7); padding: 2%">{{ dt['fs'] }}</h2>
+      </div>
     </div>
-    {% else %}
-    {% endif %}
+  </div>
+  {% else %} {% endif %}
   <div class="contain" style="margin-bottom: 20%">
     <form method="post">
       {{ rev.hidden_tag() }}
@@ -42,11 +54,14 @@
       </div>
     </form>
   </div>
-
-
 </div>
 
 <style>
+  .details {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   #review {
     resize: none;
     width: 98.6%;

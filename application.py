@@ -4,17 +4,13 @@ import requests
 import json
 from flask import Flask, render_template, session, flash, jsonify, url_for, redirect, request, make_response
 from flask_session import Session
-from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
-from sqlalchemy import create_engine
 from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms import StringField, SubmitField, PasswordField, IntegerField, TextAreaField, RadioField
 from wtforms.validators import DataRequired, Email, NumberRange, Length
-from flask_login import UserMixin
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from functools import wraps
-from markupsafe import Markup
 from flask_bootstrap import Bootstrap
 
 app = Flask(__name__)
@@ -38,22 +34,6 @@ engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
 
-# Model
-# class UserModel(UserMixin, db.Model):
-#     __tablename__ = 'Users'
-#     id = db.Column(db.Integer, primary_key=True)
-#     username = db.Column(db.String(255), unique=True)
-#     password = db.Column(db.String(255), unique=True)
-#
-#     def __init__(self, username, password):
-#         self.id = random.randint(1000, 100000)
-#         self.username = username
-#         self.password = password
-#
-#     def __repr__(self):
-#         return '<User %r>' % self.username
-
-
 class NameForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
@@ -70,6 +50,20 @@ class Review(FlaskForm):
     rating = IntegerField('Enter your rating out of 5', validators=[NumberRange(min=0, max=5)])
     review = TextAreaField('Enter your review here', validators=[Length(min=600, max=2000)])
     submit = SubmitField('Submit Review')
+
+
+def detail_fetcher(isbn):
+    details_book = requests.get(
+        "https://openlibrary.org/api/books?bibkeys=ISBN:" + str(isbn) + "&jscmd=details&format=json").content
+    details_book = json.loads(details_book.decode('utf-8'))
+    details_book = details_book.get('ISBN:' + str(isbn))
+    details_book = details_book.get('details')
+    # Information to send to template
+    title = details_book.get('title')
+    first_sentence = details_book.get('first_sentence').get('value')
+    open_lib_cover = "http://covers.openlibrary.org/b/isbn/" + str(isbn) + "-L.jpg"
+
+    return {"title": title, "fs": first_sentence, "olc": open_lib_cover}
 
 
 # Custom Decorator to require login for session
@@ -186,24 +180,30 @@ def search():
     if book_search.validate_on_submit():
         search_by = book_search.radio_field.data
         if search_by == 'ISBN':
+            isbn = str(book_search.book_search.data) + '%'
+            stmt = 'SELECT * FROM public.\"books\" WHERE isbn LIKE :isbn'
+            try:
+                query = db.execute(stmt, {"isbn": isbn}).fetchone()
+            except SystemError:
+                return jsonify(
+                    message="The sql could not be processed"
+                )
+            isbn_tbs = query['isbn']
             open_lib_request = requests.get('https://openlibrary.org/api/books?bibkeys=ISBN:' + str(
                 book_search.book_search.data) + '&jscmd=details&format=json').content
             open_lib_request = json.loads(open_lib_request.decode('utf-8'))
             open_lib_request = open_lib_request.get('ISBN:' + str(book_search.book_search.data))
-            publishers = str(open_lib_request['details']['publishers']).strip("['']")
-            nop = str(open_lib_request['details']['number_of_pages']).strip("['']")
-            open_lib_cover = "http://covers.openlibrary.org/b/isbn/" + str(book_search.book_search.data) + "-L.jpg"
+            # Data to be sent to the template
+            publishers = {"publishers", str(open_lib_request.get('details').get('publishers')).strip("['']")}
+            nop = {"pages": str(open_lib_request.get('details').get('number_of_pages')).strip("['']")}
+            print(nop)
+            if nop is None:
+                nop = {"date": str(open_lib_request.get('details').get('publish_date')).strip("['']")}
+            open_lib_cover = {
+                "olc": "http://covers.openlibrary.org/b/isbn/" + str(book_search.book_search.data) + "-L.jpg"}
 
-            isbn = str(book_search.book_search.data) + '%'
-            stmt = 'SELECT * FROM public.\"books\" WHERE isbn LIKE :isbn'
-            try:
-                query = db.execute(stmt, {"isbn": isbn}).fetchall()
-            except:
-                return jsonify(
-                    message="The sql could not be processed"
-                )
             return render_template('search.html', book_search=book_search, query=query,
-                                   open_lib_request=open_lib_request, olc=open_lib_cover, pub=publishers, nop=nop)
+                                   olr=open_lib_request, olc=open_lib_cover, pub=publishers, nop=nop, isbn=isbn_tbs)
         elif search_by == 'AUTHOR':
             author = str(book_search.book_search.data)
             stmt = 'SELECT * FROM public.\"books\" WHERE author = :author'
@@ -211,15 +211,17 @@ def search():
                 query = db.execute(stmt, {"author": author}).fetchone()
             except SystemError:
                 return render_template('unauthorized.html')
+            isbn = query['isbn']
             open_lib_request = requests.get(
                 'http://openlibrary.org/search.json?author=' + str(book_search.book_search.data)).content
             open_lib_request = json.loads(open_lib_request.decode('utf-8'))
             open_lib_request = open_lib_request.get('docs')
-            publishers = str(open_lib_request[0]['first_publish_year'])
-            nop = str(open_lib_request[0]['edition_count'])
+            publishers = {'publishers': str(open_lib_request[0]['publisher'][0])}
+            nop = {'pages': str(open_lib_request[0]['edition_count'])}
             open_lib_cover = "http://covers.openlibrary.org/b/isbn/" + str(query['isbn']) + "-L.jpg"
             return render_template('search.html', book_search=book_search, query=query,
-                                   open_lib_request=open_lib_request, olc=open_lib_cover, pub=publishers, nop=nop)
+                                   open_lib_request=open_lib_request, olc=open_lib_cover, pub=publishers, nop=nop,
+                                   isbn=isbn)
         elif search_by == 'TITLE':
             title = str(book_search.book_search.data)
             stmt = 'SELECT * FROM public.\"books\" WHERE title = :title'
@@ -239,19 +241,12 @@ def search():
     return render_template('search.html', book_search=book_search)
 
 
-@app.route('/details/<int:isbn>', methods=['GET', 'POST'])
+@app.route('/details/<string:isbn>', methods=['GET', 'POST'])
 @login_required
 def details(isbn):
     rev = Review()
-    open_lib_cover = "http://covers.openlibrary.org/b/isbn/" + str(isbn) + "-L.jpg"
-    first_sentence = requests.get("https://openlibrary.org/api/books?bibkeys=ISBN:"+str(isbn)+"&jscmd=details&format=json").content
-    first_sentence = json.loads(first_sentence.decode('utf-8'))
-    first_sentence = first_sentence.get('ISBN:'+str(isbn))
-    first_sentence = first_sentence.get('details')
-    title = first_sentence.get('title')
-    first_sentence = first_sentence.get('first_sentence')
-    first_sentence = first_sentence.get('value')
-    return render_template('review.html', olc=open_lib_cover, fs=first_sentence, rev=rev, title=title)
+    details_template = detail_fetcher(isbn)
+    return render_template('review.html', dt=details_template)
 
 
 # :TODO Make sure to test the search feature
@@ -275,7 +270,7 @@ def api_access(isbn):
         )
 
 
-@app.route('/review/<isbn>', methods=['GET', 'POST'])
+@app.route('/review/<string:isbn>', methods=['GET', 'POST'])
 @login_required
 def review(isbn):
     rev = Review()

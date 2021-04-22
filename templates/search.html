@@ -17,17 +17,17 @@
         <span class="container">
           <div
             style="
-              background-color: rgba(255, 255, 255, 0.7);
+              background-color: rgba(150, 150, 150, 0.7);
               border: black 0.1em solid;
               padding: 0.5em;
               border-radius: 0.3em;
             "
           >
-            {{ book_search.radio_field.label(style='color:black; font-size: large; font-weight:bolder;') }}
+            {{ book_search.radio_field.label(style='color:black; font-size: large; font-weight:bolder; background-color: rgba(40,40,40,0.8); padding: 2%; border: 1px solid rgba(40,40,40,0.8); border-radius:2%;' ) }}
           <br>
               {% for subfield in book_search.radio_field %}
                   <br>
-                  {{ subfield }}
+                  {{ subfield(class='option-input') }}
                {{
             subfield.label(style='color:black; font-size: large; font-weight:bolder;') }}
 
@@ -62,18 +62,38 @@
         </tr>
       </thead>
       <tbody>
+      {% if book_search.radio_field.data == 'ISBN' %}
         <tr>
           <td style="font-size: x-large">{{ query['title'] }}</td>
           <td style="font-size: x-large">{{ query['author'] }}</td>
           <td style="font-size: x-large">{{ query['year'] }}</td>
-          <td style="font-size: x-large">{{ pub }}</td>
-          <td style="font-size: x-large">{{ nop }}</td>
+          <td style="font-size: x-large">{{ pub['publishers'] }}</td>
+          <td style="font-size: x-large">{{ nop['pages'] }}</td>
         </tr>
+       {% elif book_search.radio_field.data == 'AUTHOR' %}
+          <tr>
+          <td style="font-size: x-large">{{ query['title'] }}</td>
+          <td style="font-size: x-large">{{ query['author'] }}</td>
+          <td style="font-size: x-large">{{ query['year'] }}</td>
+          <td style="font-size: x-large">{{ pub['publishers'] }}</td>
+          <td style="font-size: x-large">{{ nop['pages'] }}</td>
+        </tr>
+       {% elif book_search.radio_field.data == 'TITLE' %}
+          <tr>
+          <td style="font-size: x-large">{{ query['title'] }}</td>
+          <td style="font-size: x-large">{{ query['author'] }}</td>
+          <td style="font-size: x-large">{{ query['year'] }}</td>
+          <td style="font-size: x-large">{{ pub['publishers'] }}</td>
+          <td style="font-size: x-large">{{ nop['pages'] }}</td>
+        </tr>
+       {% else %}
+          <div>No Data was fetched!</div>
+       {% endif %}
       </tbody>
     </table>
   </div>
     <div style="display: flex; align-items: center; justify-content: center; background-color: rgba(0,0,0, 0.8); border-radius: 2px; margin-right: 43%; margin-left: 43%; border: 0.2em solid black; margin-bottom: 5%">
-        <a href="{{ url_for('details', isbn=book_search.book_search.data) }}" style="text-decoration:none;">MORE DETAILS</a>
+        <a href="{{ url_for('details', isbn=isbn) }}" style="text-decoration:none;">MORE DETAILS</a>
     </div>
   {% else %} {% endif %}
 
@@ -137,7 +157,7 @@
     outline: none;
   }
   body {
-    background-image: url("../static/books_search.jpg");
+    background-image: url("../static/search_back.jpg");
     background-repeat: no-repeat;
     background-size: cover;
   }
@@ -268,7 +288,7 @@
   }
 
   .card {
-    font-family: "Heebo";
+      font-family: "Heebo", serif;
     --bg-filter-opacity: 0.5;
     background-image: linear-gradient(
         rgba(0, 0, 0, var(--bg-filter-opacity)),
@@ -560,6 +580,77 @@
     font-size: large;
     font-weight: bold;
   }
+@keyframes click-wave {
+  0% {
+    height: 40px;
+    width: 40px;
+    opacity: 0.35;
+    position: relative;
+  }
+  100% {
+    height: 200px;
+    width: 200px;
+    margin-left: -80px;
+    margin-top: -80px;
+    opacity: 0;
+  }
+}
 
+.option-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  -o-appearance: none;
+  appearance: none;
+  position: relative;
+  top: 13.33333px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 40px;
+  width: 40px;
+  transition: all 0.15s ease-out 0s;
+  background: #cbd1d8;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  margin-right: 0.5rem;
+  outline: none;
+  position: relative;
+  z-index: 1000;
+}
+.option-input:hover {
+  background: #9faab7;
+}
+.option-input:checked {
+  background: rgba(0,0,0,0.8);
+}
+.option-input:checked::before {
+  height: 40px;
+  width: 40px;
+  position: absolute;
+  content: '✔';
+  display: inline-block;
+  font-size: 26.66667px;
+  text-align: center;
+  line-height: 40px;
+}
+.option-input:checked::after {
+  -webkit-animation: click-wave 0.65s;
+  -moz-animation: click-wave 0.65s;
+  animation: click-wave 0.65s;
+  background: rgba(0,0,0,0.8);
+  content: '';
+  display: block;
+  position: relative;
+  z-index: 100;
+}
+.option-input.radio {
+  border-radius: 50%;
+}
+.option-input.radio::after {
+  border-radius: 50%;
+}
 </style>
 {% endblock %}

@@ -28,9 +28,9 @@
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()"
           >&times;</a
         >
-        <a href="{{ url_for('login') }}">SignIn</a>
-        <a href="{{ url_for('sign_up') }}">SignUp</a>
-        <a href="{{ url_for('search') }}">Search</a>
+        <a href="{{ url_for('login') }}" class="navoptions">SignIn</a>
+        <a href="{{ url_for('sign_up') }}" class="navoptions">SignUp</a>
+        <a href="{{ url_for('search') }}" class="navoptions">Search</a>
       </div>
 
       <!-- Use any element to open the sidenav -->
@@ -63,6 +63,9 @@
     </script>
 
     <style>
+     .navoptions:focus{
+         color: black;
+     }
       /* The side navigation menu */
       .sidenav {
         height: 100%; /* 100% Full-height */
