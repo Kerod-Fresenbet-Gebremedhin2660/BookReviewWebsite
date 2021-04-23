@@ -1,5 +1,9 @@
-{% extends 'base.html' %} {% block title %}Landing Page{% endblock %} {% block
-body %} {{ super() }}
+{% extends 'base.html' %}
+{% block head %}
+    <link rel="stylesheet" href="../static/css/landing_page.css">
+{% endblock %}
+
+{% block body %} {{ super() }}
 <div>
   <p class="line-1 anim-typewriter">
       <em>Outside of a dog, a book is a man's best friend</em>
@@ -33,133 +37,11 @@ body %} {{ super() }}
     </div>
   </div>
 </div>
-<style>
-  body {
-    background-image: url("../static/bg_3.jpg");
-    background-repeat: no-repeat;
-    background-size: cover;
-  }
-  /* Google Fonts */
+    <script>
+    $('body').css('background-image', 'url("../static/bg_3.jpg")')
+    </script>
+    <style>
+    body{background-image: url("static/bg_3.jpg");}
 
-  /* Global */
-  html {
-    min-height: 100%;
-    overflow: hidden;
-  }
-  body {
-    height: calc(100vh - 8em);
-    padding: 1em;
-    color: rgba(255, 255, 255, 0.75);
-    font-family: "Anonymous Pro", monospace;
-    background-color: rgb(25, 25, 25);
-  }
-  .line-1 {
-    position: relative;
-    top: 50%;
-    width: 24em;
-    margin: 0 auto;
-    border-right: 2px solid rgba(255, 255, 255, 0.75);
-    font-size: 180%;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    transform: translateY(-50%);
-  }
-  .line-2 {
-    position: relative;
-    top: 50%;
-    width: 24em;
-    margin: 0 auto;
-    border-right: 2px solid rgba(255, 255, 255, 0.75);
-    font-size: 180%;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    transform: translateY(-50%);
-  }
-
-  /* Animation */
-  .anim-typewriter {
-    animation: typewriter 4s steps(46) 1s 1 normal both,
-      blinkTextCursor 500ms steps(46) infinite normal;
-  }
-  @keyframes typewriter {
-    from {
-      width: 0;
-    }
-    to {
-      width: 30em;
-    }
-  }
-  @keyframes blinkTextCursor {
-    from {
-      border-right-color: rgba(255, 255, 255, 0.75);
-    }
-    to {
-      border-right-color: transparent;
-    }
-  }
-  .cont {
-    display: flex;
-    margin-left: 250px;
-    margin-right: auto;
-    margin-top: 250px;
-  }
-  .perspective-text {
-    color: white;
-    font-family: Arial;
-    font-size: 58px;
-    font-weight: 900;
-    letter-spacing: -2px;
-    text-transform: uppercase;
-  }
-
-  .perspective-line {
-    height: 50px;
-    overflow: hidden;
-    position: relative;
-  }
-
-  p {
-    margin: 0;
-    height: 50px;
-    line-height: 50px;
-    transition: all 0.5s ease-in-out;
-  }
-
-  .perspective-line:nth-child(odd) {
-    transform: skew(60deg, -30deg) scaleY(0.667);
-  }
-
-  .perspective-line:nth-child(even) {
-    transform: skew(0deg, -30deg) scaleY(1.337);
-  }
-
-  .perspective-text:hover p {
-    transform: translate(0, -50px);
-  }
-
-  .perspective-line:nth-child(1) {
-    left: 29px;
-  }
-
-  .perspective-line:nth-child(2) {
-    left: 58px;
-    background: #f07e6e;
-  }
-
-  .perspective-line:nth-child(3) {
-    left: 87px;
-    background: #84cdfa;
-  }
-
-  .perspective-line:nth-child(4) {
-    left: 116px;
-    background: #5ad1cd;
-  }
-
-  .perspective-line:nth-child(5) {
-    left: 145px;
-  }
-</style>
+    </style>
 {% endblock %}

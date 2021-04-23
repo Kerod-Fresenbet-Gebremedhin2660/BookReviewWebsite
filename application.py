@@ -30,7 +30,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 Session(app)
 
 # Set up database
-engine = create_engine(os.getenv("DATABASE_URL"))
+engine = create_engine(os.getenv("DATABASE_URL"), pool_size=10, max_overflow=20)
 db = scoped_session(sessionmaker(bind=engine))
 
 
@@ -48,11 +48,30 @@ class Search(FlaskForm):
 
 class Review(FlaskForm):
     rating = IntegerField('Enter your rating out of 5', validators=[NumberRange(min=0, max=5)])
-    review = TextAreaField('Enter your review here', validators=[Length(min=600, max=2000)])
+    review = TextAreaField('Enter your review here', validators=[Length(min=600, max=6000)])
     submit = SubmitField('Submit Review')
 
 
+def handler(isbn):
+    open_lib_request = requests.get(
+        'https://openlibrary.org/api/books?bibkeys=ISBN:' + str(isbn) + '&jscmd=details&format=json').content
+    open_lib_request = json.loads(open_lib_request.decode('utf-8'))
+    open_lib_request = open_lib_request.get('ISBN:' + str(isbn))
+    # Data to be sent to the template
+    publishers = {"publishers": str(open_lib_request.get('details').get('publishers')).strip("['']")}
+    nop = {"pages": str(open_lib_request.get('details').get('number_of_pages')).strip("['']")}
+    if nop is None:
+        nop = {"date": str(open_lib_request.get('details').get('publish_date')).strip("['']")}
+
+    return {"pub": publishers, "nop": nop}
+
+
 def detail_fetcher(isbn):
+    """
+    For Fetching details on the books from Remote API Open Library
+    :param isbn:
+    :return: title, first sentence and book cover, isbn
+    """
     details_book = requests.get(
         "https://openlibrary.org/api/books?bibkeys=ISBN:" + str(isbn) + "&jscmd=details&format=json").content
     details_book = json.loads(details_book.decode('utf-8'))
@@ -63,7 +82,7 @@ def detail_fetcher(isbn):
     first_sentence = details_book.get('first_sentence').get('value')
     open_lib_cover = "http://covers.openlibrary.org/b/isbn/" + str(isbn) + "-L.jpg"
 
-    return {"title": title, "fs": first_sentence, "olc": open_lib_cover}
+    return {"title": title, "fs": first_sentence, "olc": open_lib_cover, "isbn": isbn}
 
 
 # Custom Decorator to require login for session
@@ -120,6 +139,7 @@ def sign_up():
             name_form.password.data = ''
             session['username'] = name_form.email.data
             session['logged_in'] = True
+            return redirect(url_for('search', check='New Login'))
         else:
             name_form.email.data = ''
             name_form.password.data = ''
@@ -136,7 +156,7 @@ def login():
         password = str(name_form.password.data)
         if session.get('username') == name_form.email.data:
             flash('You are already logged in', 'danger')
-            return render_template('protected.html', check="Still in Session")
+            return redirect(url_for('search', check="Still in Session"))
 
         stmt = "SELECT * FROM public.\"Users\" WHERE username =:username"
         query = db.execute(stmt, {"username": name_form.email.data}).fetchone()
@@ -151,7 +171,8 @@ def login():
             else:
                 name_form.email.data = ''
                 name_form.password.data = ''
-                return jsonify({"message": "Sign Up"})
+                flash('Improper Credentials!')
+                return redirect('login')
         else:
             name_form.email.data = ''
             name_form.password.data = ''
@@ -177,117 +198,119 @@ def protected():
 @login_required
 def search():
     book_search = Search()
+    remote_api_data = dict()
     if book_search.validate_on_submit():
         search_by = book_search.radio_field.data
+        print(search_by)
+        print(type(search_by))
         if search_by == 'ISBN':
-            isbn = str(book_search.book_search.data) + '%'
+            isbn = '%' + str(book_search.book_search.data) + '%'
             stmt = 'SELECT * FROM public.\"books\" WHERE isbn LIKE :isbn'
             try:
-                query = db.execute(stmt, {"isbn": isbn}).fetchone()
-            except SystemError:
+                query = db.execute(stmt, {"isbn": isbn}).fetchall()
+            except ConnectionError:
                 return jsonify(
-                    message="The sql could not be processed"
+                    message="The request could not be processed"
                 )
-            isbn_tbs = query['isbn']
-            open_lib_request = requests.get('https://openlibrary.org/api/books?bibkeys=ISBN:' + str(
-                book_search.book_search.data) + '&jscmd=details&format=json').content
-            open_lib_request = json.loads(open_lib_request.decode('utf-8'))
-            open_lib_request = open_lib_request.get('ISBN:' + str(book_search.book_search.data))
-            # Data to be sent to the template
-            publishers = {"publishers", str(open_lib_request.get('details').get('publishers')).strip("['']")}
-            nop = {"pages": str(open_lib_request.get('details').get('number_of_pages')).strip("['']")}
-            print(nop)
-            if nop is None:
-                nop = {"date": str(open_lib_request.get('details').get('publish_date')).strip("['']")}
-            open_lib_cover = {
-                "olc": "http://covers.openlibrary.org/b/isbn/" + str(book_search.book_search.data) + "-L.jpg"}
-
-            return render_template('search.html', book_search=book_search, query=query,
-                                   olr=open_lib_request, olc=open_lib_cover, pub=publishers, nop=nop, isbn=isbn_tbs)
+            if not query:
+                flash("Wrong Inputs!")
+            return render_template('search.html', book_search=book_search, query=query)
         elif search_by == 'AUTHOR':
-            author = str(book_search.book_search.data)
-            stmt = 'SELECT * FROM public.\"books\" WHERE author = :author'
+            author = str(book_search.book_search.data) + '%'
+            stmt = 'SELECT * FROM public.\"books\" WHERE author LIKE :author'
             try:
-                query = db.execute(stmt, {"author": author}).fetchone()
-            except SystemError:
+                query = db.execute(stmt, {"author": author}).fetchall()
+            except ConnectionError:
                 return render_template('unauthorized.html')
-            isbn = query['isbn']
-            open_lib_request = requests.get(
-                'http://openlibrary.org/search.json?author=' + str(book_search.book_search.data)).content
-            open_lib_request = json.loads(open_lib_request.decode('utf-8'))
-            open_lib_request = open_lib_request.get('docs')
-            publishers = {'publishers': str(open_lib_request[0]['publisher'][0])}
-            nop = {'pages': str(open_lib_request[0]['edition_count'])}
-            open_lib_cover = "http://covers.openlibrary.org/b/isbn/" + str(query['isbn']) + "-L.jpg"
-            return render_template('search.html', book_search=book_search, query=query,
-                                   open_lib_request=open_lib_request, olc=open_lib_cover, pub=publishers, nop=nop,
-                                   isbn=isbn)
+            return render_template('search.html', book_search=book_search, query=query)
         elif search_by == 'TITLE':
             title = str(book_search.book_search.data)
-            stmt = 'SELECT * FROM public.\"books\" WHERE title = :title'
+            stmt = 'SELECT * FROM public.\"books\" WHERE title LIKE :title'
             try:
-                query = db.execute(stmt, {"title": title}).fetchone()
-            except:
+                query = db.execute(stmt, {"title": title + '%'}).fetchall()
+            except ConnectionError:
                 return render_template('unauthorized.html')
-            open_lib_request = requests.get(
-                'http://openlibrary.org/search.json?title=' + str(book_search.book_search.data)).content
-            open_lib_request = json.loads(open_lib_request.decode('utf-8'))
-            open_lib_request = open_lib_request.get('docs')
-            publishers = str(open_lib_request[0]['publisher'][0])
-            nop = str(open_lib_request[0]['edition_count'])
-            return render_template('search.html', book_search=book_search, query=query,
-                                   open_lib_request=open_lib_request, pub=publishers, nop=nop)
+            return render_template('search.html', book_search=book_search, query=query)
 
     return render_template('search.html', book_search=book_search)
 
 
+# TODO: Make sure to fix the API access
 @app.route('/details/<string:isbn>', methods=['GET', 'POST'])
 @login_required
 def details(isbn):
+    # Review Fetch from DB
+    query = 'SELECT * FROM public.\"reviews\" WHERE fk_isbn = :isbn'
+    res = db.execute(query, {"isbn": isbn}).fetchall()
+
     rev = Review()
-    details_template = detail_fetcher(isbn)
-    return render_template('review.html', dt=details_template)
+    if rev.validate_on_submit():
+        review(isbn, rev.rating.data, rev.review.data)
+        flash('Review Successfully  Submitted')
+        rev.review.data = ''
+        rev.rating.data = ''
+    dets = detail_fetcher(isbn)
+    more_dets = handler(isbn)
+    return render_template('review.html', rev=rev, dets=dets, more_dets=more_dets, res=res)
 
 
 # :TODO Make sure to test the search feature
-
-@app.route('/api/v1/isbn/<int:isbn>')
-@auth_required
+@app.route('/api/v1/isbn/<string:isbn>')
 def api_access(isbn):
-    stmt = 'SELECT * FROM public.\"books\" WHERE isbn=:isbn'
-    query = db.execute(stmt, {"isbn": str(isbn)}).fetchone()
-    print(query)
+    json_ret = {}
+    isbn = isbn + '%'
+    stmt = 'SELECT * FROM public.\"books\" WHERE isbn LIKE :isbn'
+    query = db.execute(stmt, {"isbn": str(isbn)}).fetchall()
     if query is not None:
-        return jsonify(
-            isbn=query['isbn'],
-            title=query['title'],
-            author=query['author'],
-            year=query['year']
-        )
+        for book in query:
+            json_ret[book['isbn']] = serializer(book)
+        return jsonify(json_ret)
     else:
         return jsonify(
             message="No Book Like that in the Database"
         )
 
 
+# Auto Complete Search Endpoint
+@app.route('/api/v1/isbn/<string:isbn>')
+def ajax_endpoint(isbn):
+    json_ret_aj = {}
+    isbn = isbn + '%'
+    stmt = 'SELECT * FROM public.\"books\" WHERE isbn LIKE :isbn'
+    query = db.execute(stmt, {"isbn": str(isbn)}).fetchall()
+    if query is not None:
+        for book in query:
+            json_ret_aj[book['isbn']] = serializer(book)
+        return jsonify(json_ret_aj)
+    else:
+        return jsonify(
+            message="No Book Like that in the Database"
+        )
+
+
+def serializer(obj):
+    return dict(
+        title=obj['title'],
+        author=obj['author'],
+        isbn=obj['isbn'],
+    )
+
+
 @app.route('/review/<string:isbn>', methods=['GET', 'POST'])
 @login_required
-def review(isbn):
-    rev = Review()
-    if rev.validate_on_submit():
-        print(rev.review.data)
-        query_user = "SELECT * FROM public.\"Users\" WHERE username=:username"
-        res = db.execute(query_user, {"username": session.get('username')}).fetchone()
-        if res is not None:
-            query = "INSERT into public.\"reviews\" (id, rating, review, fk_isbn, fk_id) VALUES(:id, :rating, :review, :fk_isbn, :fk_id)"
-            fk_id = res['id']
-            db.execute(query, {"id": random.randint(1, 10000), "rating": rev.rating.data, "review": rev.review.data,
-                               "fk_isbn": isbn, "fk_id": fk_id})
-            db.commit()
-            flash("Successful")
-        else:
-            return redirect(unauthorized)
-    return render_template('review.html', rev=rev)
+def review(isbn, rating, review):
+    query_user = "SELECT * FROM public.\"Users\" WHERE username=:username"
+    res = db.execute(query_user, {"username": session.get('username')}).fetchone()
+    if res is not None:
+        query = "INSERT into public.\"reviews\" (id, rating, review, fk_isbn, fk_id) VALUES(:id, :rating, :review, :fk_isbn, :fk_id)"
+        fk_id = res['id']
+        db.execute(query, {"id": random.randint(1, 10000), "rating": rating, "review": review,
+                           "fk_isbn": isbn, "fk_id": fk_id})
+        result = db.commit()
+        if result is None:
+            flash('A Review has already been submitted!', 'error')
+    else:
+        return redirect(unauthorized)
 
 
 # :TODO Make this better

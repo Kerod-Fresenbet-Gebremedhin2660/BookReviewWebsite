@@ -1,0 +1,119 @@
+.details {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #review {
+    resize: none;
+    width: 98.6%;
+    height: 20em;
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+  #sub {
+    background-color: inherit;
+    border: none;
+    outline: none;
+  }
+  body {
+    background-image: url("/static/review.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  .contain {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  form {
+    border: 5px solid #f1f1f1;
+  }
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 16px 8px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+  button {
+    background-color: #8ebf42;
+    color: white;
+    padding: 14px 0;
+    margin: 10px 0;
+    border: none;
+    cursor: grabbing;
+    width: 100%;
+  }
+  h1 {
+    text-align: center;
+    fone-size: 18;
+  }
+  button:hover {
+    opacity: 0.8;
+  }
+  .formcontainer {
+    text-align: left;
+  }
+  .holder {
+    padding: 16px 0;
+    text-align: left;
+  }
+  span.psw {
+    float: right;
+    padding-top: 0;
+    padding-right: 15px;
+  }
+  /* Change styles for span on extra small screens */
+  @media screen and (max-width: 300px) {
+    span.psw {
+      display: block;
+      float: none;
+    }
+  }
+  .sidenav {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+  .review_cont{
+    display: flex;
+    justify-content: center;
+    align-content: center;
+  }
+  .rating{
+    font-size: xx-large;
+    font-weight: bolder;
+  }
+  .review_text{
+    text-align: justify;
+    font-weight: bolder;
+    color-rendering: optimizeQuality;
+    border-color: #0a53be;
+  }
+  .review_text_target {
+  white-space: nowrap;
+  overflow: hidden;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 28px;
+  color: rgba(255,255,255,.70);
+  margin: 0 auto;
+}
+
+/* Animation */
+.review_text_target {
+  animation: animated-text 4s steps(29,end) 1s 1 normal both,
+             animated-cursor 600ms steps(29,end) infinite;
+}
+
+/* text animation */
+
+@keyframes animated-text{
+  from{width: 0;}
+  to{width: 472px;}
+}
+
+/* cursor animations */
+
+@keyframes animated-cursor{
+  from{border-right-color: rgba(0,255,0,.75);}
+  to{border-right-color: transparent;}
+}

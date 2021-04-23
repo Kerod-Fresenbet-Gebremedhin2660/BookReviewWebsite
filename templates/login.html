@@ -1,94 +1,52 @@
-{% extends 'base.html' %}
-    {% block head %}
-        {{ super() }}
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css"
-    />
-    <link rel="stylesheet" href="../static/css/style_2.css" />
-        <title>Login</title>
-    {% endblock %}
-
-  {% block body %}
-      {{ super() }}
-      <div class="contain">
+{% extends 'base.html' %} {% block head %} {{ super() }}
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css"
+/>
+<link rel="stylesheet" href="../static/css/style_2.css" />
+    <link rel="stylesheet" href="../static/css/login.css">
+    <script defer src="../static/js/jquery.min.js"></script>
+{% endblock %} {% block body %} {{ super() }}
+<div class="contain">
   <form method="post">
-      {{ name_form.hidden_tag() }}
-      <h1>Login</h1>
-      <div class="formcontainer">
-      <hr/>
+    {{ name_form.hidden_tag() }}
+    <h1>Login</h1>
+    <div class="formcontainer">
+      <hr />
       <div class="container">
-        <label for="uname" style="color: black; font-weight: bold; font-size: larger"><strong>USERNAME</strong></label>
+        <label
+          for="uname"
+          style="color: black; font-weight: bold; font-size: larger"
+          ><strong>USERNAME</strong></label
+        >
         {{ name_form.email }}
-        <label for="psw" style="color: black; font-weight: bold; font-size: larger"><strong>PASSWORD</strong></label>
+        <label
+          for="psw"
+          style="color: black; font-weight: bold; font-size: larger"
+          ><strong>PASSWORD</strong></label
+        >
         {{ name_form.password }}
       </div>
       <button type="submit">{{ name_form.submit(id='sub') }}</button>
-      </div> </form>
-      </div>
+    </div>
+  </form>
+</div>
+{% for message in get_flashed_messages() %}
+<div
+  class="alert alert-warning custom-warning"
+  id="my_div"
+  style="margin-left: 40%; margin-right: 40%; margin-top: 2%"
+>
+  <button type="button" class="close" data-dismiss="alert" id="close_but">&times;</button>
+  {{ message }}
+</div>
+{% endfor %}
+<script>
+    $("#close_but").click(function () {
+        $("#my_div").hide();
+    })
+    $('body').css('background-image', 'url("../static/cool_bg.jpg")')
+</script>
 
 
-  <style>
-  #sub{
-      background-color: inherit;
-      border: none;
-      outline: none;
-  }
-    body {
-      background-image: url("../static/cool_bg.jpg");
-      background-repeat: no-repeat;
-      background-size: cover;
-    }
-    .contain {
-      display: flex;
-        align-items: center;
-        justify-content: center;
-
-    } form {
-      border: 5px solid #f1f1f1;
-      }
-      input[type=text], input[type=password] {
-      width: 100%;
-      padding: 16px 8px;
-      margin: 8px 0;
-      display: inline-block;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-      }
-      button {
-      background-color: #8ebf42;
-      color: white;
-      padding: 14px 0;
-      margin: 10px 0;
-      border: none;
-      cursor: grabbing;
-      width: 100%;
-      }
-      h1 {
-      text-align:center;
-      fone-size:18;
-      }
-      button:hover {
-      opacity: 0.8;
-      }
-      .formcontainer {
-      text-align: left;
-      margin: 24px 50px 12px;
-      }
-      .holder {
-      padding: 16px 0;
-      text-align:left;
-      }
-      span.psw {
-      float: right;
-      padding-top: 0;
-      padding-right: 15px;
-      }
-      /* Change styles for span on extra small screens */
-      @media screen and (max-width: 300px) {
-      span.psw {
-      display: block;
-      float: none;
-      }}
-    </style>
 {% endblock %}

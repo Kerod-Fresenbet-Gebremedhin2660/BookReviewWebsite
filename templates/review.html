@@ -1,30 +1,66 @@
-{% extends 'base.html' %} {% block head %}
-    {{ super() }}
-    <meta charset="UTF-8" />
-    <title>
-    Review
-    </title>
+{% extends 'base.html' %} {% block head %} {{ super() }}
+<meta charset="UTF-8" />
+<link rel="stylesheet" href="../static/css/review.css" />
 {% endblock %} {% block body %} {{ super() }}
 <div class="wrapwrapper">
-  {% if dt %}
   <div
     style="
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: 2%;
+      margin: 2% 2% 2%;
     "
   >
+    {% if dets %}
     <div class="details" style="margin-bottom: 1%">
-
-      <img src="{{ dt['olc'] }}" alt="Cover Art to be displayed here!" class="olc" />
+      <img
+        src="{{ dets['olc'] }}"
+        alt="Cover Art to be displayed here!"
+        class="olc"
+      />
       <div style="margin-left: 1%">
-        <h1 style="background-color: rgba(255,255,255,0.7); padding: 2% ">{{ dt['title'] }}</h1>
-        <h2 style="background-color: rgba(255,255,255,0.7); padding: 2%">{{ dt['fs'] }}</h2>
+        <h1
+          style="
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 2%;
+            text-align: center;
+          "
+        >
+          {{ dets['title'] }}
+        </h1>
+        <h2
+          style="
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 2%;
+            text-align: center;
+          "
+        >
+          {{ dets['fs'] }}
+        </h2>
+        <h2
+          style="
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 2%;
+            text-align: center;
+          "
+        >
+          <em>Publishers: </em>{{ more_dets['pub']['publishers'] }}
+        </h2>
+        <h2
+          style="
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 2%;
+            text-align: center;
+          "
+        >
+          <em>Number of Pages:</em> {{ more_dets['nop']['pages'] }}
+        </h2>
       </div>
     </div>
   </div>
-  {% else %} {% endif %}
+  {% else %}
+  <div><h1>No Data Fetched!</h1></div>
+  {% endif %}
   <div class="contain" style="margin-bottom: 20%">
     <form method="post">
       {{ rev.hidden_tag() }}
@@ -35,7 +71,7 @@
           margin-right: 2%;
         "
       >
-        <h1>REVIEW</h1>
+        <h1 contenteditable spellcheck="false">REVIEW</h1>
       </div>
 
       <div class="formcontainer">
@@ -43,7 +79,7 @@
         <div class="container">
           <label
             for="uname"
-            style="color: black; font-weight: bold; font-size: larger"
+            style="color: black; font-weight: bold; font-size: larger; border-right: black solid 2px; border-left: black solid 2px; margin-left: 2%"
             ><strong>RATING</strong></label
           >
           {{ rev.rating(style="background-color: rgba(255,255,255,0.8);",
@@ -54,84 +90,61 @@
       </div>
     </form>
   </div>
-</div>
+  <div class="" style="margin-bottom: 5%">
+    <h1 class="review_text_target">REVIEWS</h1>
+    {% if res %} {% for review in res %}
 
+    <div
+      style="
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        margin-right: 5%;
+        margin-left: 5%;
+      "
+      class="review_cont"
+    >
+      <hr />
+      <hr />
+      <div class="rating">
+        <h1><em>Rating: </em>{{ review['rating']}}/5</h1>
+      </div>
+      <div style="margin-left: 30%; margin-right: 30%" class="review_text">
+          <p>{{ review['review'] }}</p>
+
+      </div>
+      <hr />
+      <hr />
+    </div>
+    {% endfor %} {% else %} {% endif %}
+  </div>
+</div>
+{% for message in get_flashed_messages() %}
+<div
+  class="alert alert-warning custom-warning"
+  id="my_div"
+  style="margin-left: 40%; margin-right: 40%; margin-top: 2%"
+>
+  <button type="button" class="close" data-dismiss="alert" id="close_but">
+    &times;
+  </button>
+  {{ message }}
+</div>
+{% endfor %}
+<script>
+  $("#close_but").click(function () {
+    $("#my_div").hide();
+  });
+</script>
 <style>
-  .details {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  #review {
-    resize: none;
-    width: 98.6%;
-    height: 20em;
-    background-color: rgba(255, 255, 255, 0.8);
-  }
-  #sub {
-    background-color: inherit;
-    border: none;
-    outline: none;
+  .sidenav {
+    background-color: rgba(100, 100, 100, 0.7);
   }
   body {
-    background-image: url("../static/review.jpg");
+    background-image: url("/static/review.jpg");
     background-repeat: no-repeat;
     background-size: cover;
   }
-  .contain {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  form {
-    border: 5px solid #f1f1f1;
-  }
-  input[type="text"],
-  input[type="password"] {
-    width: 100%;
-    padding: 16px 8px;
-    margin: 8px 0;
-    display: inline-block;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-  }
-  button {
-    background-color: #8ebf42;
-    color: white;
-    padding: 14px 0;
-    margin: 10px 0;
-    border: none;
-    cursor: grabbing;
-    width: 100%;
-  }
-  h1 {
-    text-align: center;
-    fone-size: 18;
-  }
-  button:hover {
-    opacity: 0.8;
-  }
-  .formcontainer {
-    text-align: left;
-  }
-  .holder {
-    padding: 16px 0;
-    text-align: left;
-  }
-  span.psw {
-    float: right;
-    padding-top: 0;
-    padding-right: 15px;
-  }
-  /* Change styles for span on extra small screens */
-  @media screen and (max-width: 300px) {
-    span.psw {
-      display: block;
-      float: none;
-    }
-  }
-  .sidenav {
-    background-color: rgba(0, 0, 0, 0.7);
-  }
 </style>
+
+
 {% endblock %}

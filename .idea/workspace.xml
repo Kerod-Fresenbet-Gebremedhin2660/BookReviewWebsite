@@ -20,13 +20,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3f681e14-4686-47ae-bb50-3cab130aa237" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/static/search_back.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css/landing_page.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css/login.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css/review.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css/signup.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/js/jquery.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/application.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flask_session/2029240f6d1128be89ddc32729463129" beforeDir="false" afterPath="$PROJECT_DIR$/flask_session/2029240f6d1128be89ddc32729463129" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/flask_session/4f87915a1e880010ee114c6f1ae4659a" beforeDir="false" afterPath="$PROJECT_DIR$/flask_session/4f87915a1e880010ee114c6f1ae4659a" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/style_2.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/style_2.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/book.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/landing_page.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/landing_page.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/login.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/review.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/review.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/search.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/search.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/search_result.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/signup.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/signup.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,7 +49,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="HTML File" />
+        <option value="JavaScript File" />
         <option value="Python Script" />
+        <option value="CSS File" />
       </list>
     </option>
   </component>
@@ -56,10 +70,11 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/static" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../NerdDinnerAPI-SE-SEC-ONE" />
+    <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="prettierjs.PrettierConfiguration.Package" value="$PROJECT_DIR$/node_modules/prettier" />
-    <property name="settings.editor.selected.configurable" value="reference.idesettings.emmet" />
+    <property name="settings.editor.selected.configurable" value="Errors" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -174,7 +189,10 @@
       <workItem from="1618893619517" duration="6013000" />
       <workItem from="1618915645124" duration="14042000" />
       <workItem from="1618937233464" duration="8056000" />
-      <workItem from="1619110000745" duration="14822000" />
+      <workItem from="1619110000745" duration="15884000" />
+      <workItem from="1619156561897" duration="464000" />
+      <workItem from="1619166011986" duration="33090000" />
+      <workItem from="1619204797361" duration="6719000" />
     </task>
     <servers />
   </component>
@@ -203,9 +221,10 @@
     </state>
     <state x="1000" y="185" width="800" height="672" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.21.1920.1031@0.21.1920.1031" timestamp="1617900091361" />
     <state x="794" y="134" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.1920.1055@0.25.1920.1055" timestamp="1618042223748" />
-    <state x="743" y="281" width="428" height="484" key="FileChooserDialogImpl" timestamp="1618653569862">
-      <screen x="0" y="0" width="1920" height="1039" />
+    <state x="529" y="197" width="398" height="339" key="FileChooserDialogImpl" timestamp="1619157023774">
+      <screen x="0" y="0" width="1366" height="727" />
     </state>
+    <state x="529" y="197" width="398" height="339" key="FileChooserDialogImpl/0.0.1366.727@0.0.1366.727" timestamp="1619157023774" />
     <state x="743" y="281" width="428" height="484" key="FileChooserDialogImpl/0.0.1920.1039@0.0.1920.1039" timestamp="1618653569862" />
     <state x="743" y="310" width="424" height="477" key="FileChooserDialogImpl/0.25.1920.1055@0.25.1920.1055" timestamp="1618217112672" />
     <state width="1324" height="163" key="GridCell.Tab.0.bottom" timestamp="1618894308126">
@@ -248,11 +267,11 @@
       <screen x="0" y="0" width="1920" height="1039" />
     </state>
     <state width="1876" height="365" key="GridCell.Tab.1.right/0.0.1920.1039@0.0.1920.1039" timestamp="1618655251827" />
-    <state x="83" y="33" width="1046" height="727" key="SettingsEditor" timestamp="1618939261383">
+    <state x="89" y="93" width="1046" height="727" key="SettingsEditor" timestamp="1619202562831">
       <screen x="0" y="0" width="1920" height="1039" />
     </state>
-    <state x="112" y="0" width="1046" height="727" key="SettingsEditor/0.0.1366.727@0.0.1366.727" timestamp="1618826628217" />
-    <state x="83" y="33" width="1470" height="730" key="SettingsEditor/0.0.1920.1039@0.0.1920.1039" timestamp="1618939261383" />
+    <state x="112" y="0" width="1046" height="727" key="SettingsEditor/0.0.1366.727@0.0.1366.727" timestamp="1619181985815" />
+    <state x="89" y="93" width="1470" height="730" key="SettingsEditor/0.0.1920.1039@0.0.1920.1039" timestamp="1619202562831" />
     <state x="175" y="197" key="SettingsEditor/0.21.1920.1031@0.21.1920.1031" timestamp="1617898712238" />
     <state x="693" y="360" width="524" height="377" key="com.intellij.database.dbimport.ImportUtil.ChooseTargetDialog" timestamp="1618234771857">
       <screen x="0" y="25" width="1920" height="1055" />
