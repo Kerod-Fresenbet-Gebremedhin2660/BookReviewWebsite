@@ -9,6 +9,7 @@
 * The main menu is accessible via the hamburger menu in the top right corner
 * The api endpoint access is fulfilled and requires basic authorization
 ** User agents like postman may be used to test
+* The remote git has all files in project, file ignores were not made to the virtual environment and the like
 
 
 
