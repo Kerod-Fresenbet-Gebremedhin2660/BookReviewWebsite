@@ -12,26 +12,23 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from functools import wraps
 from flask_bootstrap import Bootstrap
+import config
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
 # Check for environment variable
-if not os.getenv("DATABASE_URL"):
-    raise RuntimeError("DATABASE_URL is not set")
 
-if not os.getenv("SECRET_KEY"):
-    raise RuntimeError("SECRET_KEY is not set")
 
-app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
-# Configure session to use filesystem
-app.config['SESSION_PERMANENT'] = False
-app.config['SESSION_TYPE'] = "filesystem"
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
-Session(app)
-
-# Set up database
-engine = create_engine(os.getenv("DATABASE_URL"), pool_size=10, max_overflow=20)
-db = scoped_session(sessionmaker(bind=engine))
+# app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
+# # Configure session to use filesystem
+# app.config['SESSION_PERMANENT'] = False
+# app.config['SESSION_TYPE'] = "filesystem"
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+# Session(app)
+#
+# # Set up database
+# engine = create_engine(os.getenv("DATABASE_URL"), pool_size=10, max_overflow=20)
+# db = scoped_session(sessionmaker(bind=engine))
 
 
 class NameForm(FlaskForm):
@@ -370,7 +367,6 @@ def review(isbn, rating, review):
         db.execute(query, {"id": random.randint(1, 10000), "rating": rating, "review": review,
                            "fk_isbn": isbn, "fk_id": fk_id})
 
-
         result = db.commit()
         if result is None:
             flash('A Review has already been submitted!')
@@ -382,3 +378,17 @@ def review(isbn, rating, review):
 @app.errorhandler(401)
 def unauthorized():
     return render_template('unauthorized.html')
+
+
+if __name__ == "__main__":
+    app.config['SECRET_KEY'] = config.SECRET_KEY
+    # Configure session to use filesystem
+    app.config['SESSION_PERMANENT'] = False
+    app.config['SESSION_TYPE'] = "filesystem"
+    app.config['SQLALCHEMY_DATABASE_URI'] = config.DATABASE_URL
+    Session(app)
+
+    # Set up database
+    engine = create_engine(config.DATABASE_URL, pool_size=10, max_overflow=20)
+    db = scoped_session(sessionmaker(bind=engine))
+    app.run()
