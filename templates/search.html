@@ -63,9 +63,15 @@
     <tbody>
       {% if book_search.radio_field.data == 'ISBN' %} {% for book in query %}
       <tr>
-        <td style="font-size: x-large">{{ book['title'] }}</td>
-        <td style="font-size: x-large">{{ book['author'] }}</td>
-        <td style="font-size: x-large">{{ book['year'] }}</td>
+        <td style="font-size: x-large"><a href="{{ url_for('details', isbn=book['isbn']) }}"
+            >{{ book['title'] }}</a
+          ></td>
+        <td style="font-size: x-large"><a href="{{ url_for('details', isbn=book['isbn']) }}"
+            >{{ book['author'] }}</a
+          ></td>
+        <td style="font-size: x-large"><a href="{{ url_for('details', isbn=book['isbn']) }}"
+            >{{ book['year'] }}</a
+          ></td>
         <td style="font-size: x-large">
           <a href="{{ url_for('details', isbn=book['isbn']) }}"
             >{{ book['isbn'] }}</a
@@ -75,9 +81,15 @@
       {% endfor %} {% elif book_search.radio_field.data == 'AUTHOR' %} {% for
       book in query %}
       <tr>
-        <td style="font-size: x-large">{{ book['title'] }}</td>
-        <td style="font-size: x-large">{{ book['author'] }}</td>
-        <td style="font-size: x-large">{{ book['year'] }}</td>
+        <td style="font-size: x-large"><a href="{{ url_for('details', isbn=book['isbn']) }}"
+            >{{ book['title'] }}</a
+          ></td>
+        <td style="font-size: x-large"><a href="{{ url_for('details', isbn=book['isbn']) }}"
+            >{{ book['author'] }}</a
+          ></td>
+        <td style="font-size: x-large"><a href="{{ url_for('details', isbn=book['isbn']) }}"
+            >{{ book['year'] }}</a
+          ></td>
         <td style="font-size: x-large">
           <a href="{{ url_for('details', isbn=book['isbn']) }}"
             >{{ book['isbn'] }}</a
@@ -87,9 +99,15 @@
       {% endfor %} {% elif book_search.radio_field.data == 'TITLE' %} {% for
       book in query %}
       <tr>
-        <td style="font-size: x-large">{{ book['title'] }}</td>
-        <td style="font-size: x-large">{{ book['author'] }}</td>
-        <td style="font-size: x-large">{{ book['year'] }}</td>
+        <td style="font-size: x-large"><a href="{{ url_for('details', isbn=book['isbn']) }}"
+            >{{ book['title'] }}</a
+          ></td>
+        <td style="font-size: x-large"><a href="{{ url_for('details', isbn=book['isbn']) }}"
+            >{{ book['author'] }}</a
+          ></td>
+        <td style="font-size: x-large"><a href="{{ url_for('details', isbn=book['isbn']) }}"
+            >{{ book['year'] }}</a
+          ></td>
         <td style="font-size: x-large">
           <a href="{{ url_for('details', isbn=book['isbn']) }}"
             >{{ book['isbn'] }}</a

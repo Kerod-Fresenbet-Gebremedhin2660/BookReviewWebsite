@@ -21,10 +21,15 @@
   <component name="ChangeListManager">
     <list default="true" id="3f681e14-4686-47ae-bb50-3cab130aa237" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application.py" beforeDir="false" afterPath="$PROJECT_DIR$/application.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/flask_session/2029240f6d1128be89ddc32729463129" beforeDir="false" afterPath="$PROJECT_DIR$/flask_session/2029240f6d1128be89ddc32729463129" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/flask_session/4f87915a1e880010ee114c6f1ae4659a" beforeDir="false" afterPath="$PROJECT_DIR$/flask_session/4f87915a1e880010ee114c6f1ae4659a" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/landing_page.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/landing_page.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/review.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/review.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/search.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/search.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,15 +68,15 @@
     <property name="settings.editor.selected.configurable" value="Errors" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/static/js" />
-      <recent name="$PROJECT_DIR$/static" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/static" />
       <recent name="$PROJECT_DIR$/templates" />
       <recent name="$PROJECT_DIR$/static/css" />
       <recent name="$PROJECT_DIR$/static/js" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/static/js" />
+      <recent name="$PROJECT_DIR$/static" />
     </key>
   </component>
   <component name="RunManager" selected="Python.projectone-Kerod-Fresenbet-Gebremedhin2660">
@@ -180,7 +185,7 @@
       <workItem from="1619166011986" duration="33090000" />
       <workItem from="1619204797361" duration="7862000" />
       <workItem from="1619246912636" duration="12155000" />
-      <workItem from="1619262932419" duration="12978000" />
+      <workItem from="1619262932419" duration="19672000" />
     </task>
     <servers />
   </component>

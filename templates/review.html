@@ -148,14 +148,16 @@
       <table class="fl-table">
         <thead>
           <tr>
-            <th>RATINGS</th>
-            <th>REVIEWS</th>
+            <th style="font-weight: bold; font-size: xx-large;">RATINGS</th>
+            <th style="font-weight: bold; font-size: xx-large;">REVIEWS</th>
+              <th style="font-weight: bold; font-size: xx-large;">AVERAGE SCORE</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>{{ counts['rc'] }}</td>
-            <td>{{ counts['rec'] }}</td>
+            <td style="font-size: large">{{ counts['rc'] }}</td>
+            <td style="font-size: large">{{ counts['rec'] }}</td>
+              <td style="font-size: large"> {{ counts['avg'] }}</td>
           </tr>
         </tbody>
 

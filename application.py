@@ -126,9 +126,11 @@ def goodreads(isbn):
     res = requests.get('https://www.goodreads.com/book/review_counts.json?k&isbns=' + isbn).content
     res = json.loads(res.decode('utf-8'))
     res = res.get('books')[0]
+
     reviews_count = res.get('reviews_count')
     ratings_count = res.get('ratings_count')
-    return {"rc": ratings_count, "rec": reviews_count}
+    average_score = res.get('average_rating')
+    return {"rc": ratings_count, "rec": reviews_count, "avg": average_score}
 
 
 # Custom Decorator to require login for session
@@ -309,14 +311,21 @@ def details(isbn):
 
 # :TODO Make sure to test the search feature
 @app.route('/api/v1/isbn/<string:isbn>')
+@auth_required
 def api_access(isbn):
     json_ret = {}
+    ratings_count = goodreads(isbn).get("rec")
+    average_score = goodreads(isbn).get("avg")
+
     isbn = isbn + '%'
     stmt = 'SELECT * FROM public.\"books\" WHERE isbn LIKE :isbn'
     query = db.execute(stmt, {"isbn": str(isbn)}).fetchall()
     if query is not None:
         for book in query:
-            json_ret[book['isbn']] = serializer(book)
+            json_ret['book'] = serializer(book)
+        json_ret = json_ret.get('book')
+        json_ret['review_count'] = ratings_count
+        json_ret['average_score'] = average_score
         return jsonify(json_ret)
     else:
         return jsonify(
@@ -345,7 +354,8 @@ def serializer(obj):
     return dict(
         title=obj['title'],
         author=obj['author'],
-        isbn=obj['isbn'],
+        year=obj['year'],
+        isbn=obj['isbn']
     )
 
 

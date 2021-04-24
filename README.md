@@ -138,4 +138,6 @@ Beyond these requirements, the design, look, and feel of the website are up to y
 
 ## References
 <a id="1">[1]</a> 
-[https://cs50.harvard.edu/web/2020/#:~:text=Programming%20with%20Python%20and%20JavaScript
+[https://cs50.harvard.edu/web/2020/#:~:text=Programming%20with%20Python%20and%20JavaScriptapplication.py books.csv dictMaker.py flask_session import.py initial.sh Models.py node_modules package.json package-lock.json __pycache__ README.md requirements.txt startup.py static templates testing.py venv webproj}
+
+# Considerations
