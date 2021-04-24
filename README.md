@@ -1,4 +1,4 @@
-# Kerod Fresenbet Gebremdhin
+# Kerod Fresenbet Gebremedhin
 ## ATR/2660/10
 ### ADD STUDENT
 
