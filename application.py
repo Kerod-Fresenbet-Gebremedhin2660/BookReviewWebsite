@@ -16,19 +16,17 @@ import config
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
-# Check for environment variable
 
+app.config['SECRET_KEY'] = config.SECRET_KEY
+# Configure session to use filesystem
+app.config['SESSION_PERMANENT'] = False
+app.config['SESSION_TYPE'] = "filesystem"
+app.config['SQLALCHEMY_DATABASE_URI'] = config.DATABASE_URL
+Session(app)
 
-# app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
-# # Configure session to use filesystem
-# app.config['SESSION_PERMANENT'] = False
-# app.config['SESSION_TYPE'] = "filesystem"
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
-# Session(app)
-#
-# # Set up database
-# engine = create_engine(os.getenv("DATABASE_URL"), pool_size=10, max_overflow=20)
-# db = scoped_session(sessionmaker(bind=engine))
+# Set up database
+engine = create_engine(config.DATABASE_URL, pool_size=10, max_overflow=20)
+db = scoped_session(sessionmaker(bind=engine))
 
 
 class NameForm(FlaskForm):
@@ -380,15 +378,4 @@ def unauthorized():
     return render_template('unauthorized.html')
 
 
-if __name__ == "__main__":
-    app.config['SECRET_KEY'] = config.SECRET_KEY
-    # Configure session to use filesystem
-    app.config['SESSION_PERMANENT'] = False
-    app.config['SESSION_TYPE'] = "filesystem"
-    app.config['SQLALCHEMY_DATABASE_URI'] = config.DATABASE_URL
-    Session(app)
 
-    # Set up database
-    engine = create_engine(config.DATABASE_URL, pool_size=10, max_overflow=20)
-    db = scoped_session(sessionmaker(bind=engine))
-    app.run()
