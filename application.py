@@ -48,7 +48,7 @@ class Search(FlaskForm):
 
 class Review(FlaskForm):
     rating = IntegerField('Enter your rating out of 5', validators=[NumberRange(min=0, max=5)])
-    review = TextAreaField('Enter your review here', validators=[Length(min=600, max=6000)])
+    review = TextAreaField('Enter your review here', validators=[Length(min=30, max=10000)])
     submit = SubmitField('Submit Review')
 
 
@@ -292,10 +292,15 @@ def details(isbn):
 
     rev = Review()
     if rev.validate_on_submit():
-        review(isbn, rev.rating.data, rev.review.data)
-        flash('Review Successfully  Submitted')
-        rev.review.data = ''
-        rev.rating.data = ''
+        try:
+            review(isbn, int(rev.rating.data), str(rev.review.data))
+        except:
+            flash("you have already submitted a review!")
+            return redirect(url_for('landing_page'))
+
+    rev.review.data = ''
+    rev.rating.data = ''
+
     dets = detail_fetcher(isbn)
     more_dets = handler(isbn)
     counts = goodreads(isbn)
@@ -354,9 +359,11 @@ def review(isbn, rating, review):
         fk_id = res['id']
         db.execute(query, {"id": random.randint(1, 10000), "rating": rating, "review": review,
                            "fk_isbn": isbn, "fk_id": fk_id})
+
+
         result = db.commit()
         if result is None:
-            flash('A Review has already been submitted!', 'error')
+            flash('A Review has already been submitted!')
     else:
         return redirect(unauthorized)
 

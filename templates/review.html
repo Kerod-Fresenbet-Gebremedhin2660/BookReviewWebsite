@@ -2,11 +2,19 @@
 <meta charset="UTF-8" />
 <link rel="stylesheet" href="../static/css/review.css" />
 {% endblock %} {% block body %} {{ super() }}
-    <div style="display: flex; justify-content: center">
-      <h1 class="review_goodreads" style="background-color: rgba(255,255,255,0.6); border: black dashed 1px; border-radius: 2%; padding: 1%;">
-      DATA FROM OPEN LIBRARY API
+<div style="display: flex; justify-content: center">
+  <h1
+    class="review_goodreads"
+    style="
+      background-color: rgba(255, 255, 255, 0.6);
+      border: black dashed 1px;
+      border-radius: 2%;
+      padding: 1%;
+    "
+  >
+    DATA FROM OPEN LIBRARY API
   </h1>
-  </div>
+</div>
 <div class="wrapwrapper">
   <div
     style="
@@ -84,7 +92,14 @@
         <div class="container">
           <label
             for="uname"
-            style="color: black; font-weight: bold; font-size: larger; border-right: black solid 2px; border-left: black solid 2px; margin-left: 2%"
+            style="
+              color: black;
+              font-weight: bold;
+              font-size: larger;
+              border-right: black solid 2px;
+              border-left: black solid 2px;
+              margin-left: 2%;
+            "
             ><strong>RATING</strong></label
           >
           {{ rev.rating(style="background-color: rgba(255,255,255,0.8);",
@@ -95,40 +110,77 @@
       </div>
     </form>
   </div>
+  {% for message in get_flashed_messages() %}
+  <section style="display: flex; justify-content: center">
+    <div
+      class="message"
+      style="
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        background-color: rgba(0, 0, 0, 0.6);
+        margin-top: 5%;
+        padding: 2%;
+      "
+    >
+      {{ message }}
+    </div>
+  </section>
+  {% endfor %}
   <div class="" style="margin-bottom: 5%">
-  <div style="display: flex; justify-content: center">
-      <h1 class="review_goodreads" style="background-color: rgba(255,255,255,0.6); border: black dotted 1px; border-radius: 2%; padding: 1%;">
-      REVIEW DATA GOOD READS
-  </h1>
-  </div>
+    <div style="display: flex; justify-content: center">
+      <h1
+        class="review_goodreads"
+        style="
+          background-color: rgba(255, 255, 255, 0.6);
+          border: black dotted 1px;
+          border-radius: 2%;
+          padding: 1%;
+        "
+      >
+        GOOD READS REVIEW DATA
+      </h1>
+    </div>
 
-  {% if counts %}
+    {% if counts %}
 
-  <div class="table-wrapper">
-    <table class="fl-table">
+    <div class="table-wrapper">
+      <table class="fl-table">
         <thead>
-        <tr>
+          <tr>
             <th>RATINGS</th>
             <th>REVIEWS</th>
-        </tr>
+          </tr>
         </thead>
         <tbody>
-        <tr>
+          <tr>
             <td>{{ counts['rc'] }}</td>
             <td>{{ counts['rec'] }}</td>
-        </tr>
-        <tbody>
-    </table>
-</div>
+          </tr>
+        </tbody>
 
-  {% else %}
-  {% endif %}
-    <h1 class="review_text_target" style="background-color: rgba(0,0,0,0.6); border: black dotted 1px; border-radius: 2%; padding: 1%; margin-bottom: 1%">REVIEWS</h1>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    {% else %} {% endif %}
+    <h1
+      class="review_text_target"
+      style="
+        background-color: rgba(0, 0, 0, 0.6);
+        border: black dotted 1px;
+        border-radius: 2%;
+        padding: 1%;
+        margin-bottom: 1%;
+      "
+    >
+      LOCAL REVIEWS
+    </h1>
     {% if res %} {% for review in res %}
 
     <div
       style="
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(255, 255, 255, 0.7);
         justify-content: center;
         margin-right: 5%;
         margin-left: 5%;
@@ -141,38 +193,28 @@
         <h1><em>Rating: </em>{{ review['rating']}}/5</h1>
       </div>
       <div style="margin-left: 30%; margin-right: 30%" class="review_text">
-          <p>{{ review['review'] }}</p>
-
+        <p>{{ review['review'] }}</p>
       </div>
       <hr />
       <hr />
     </div>
     {% endfor %} {% else %}
-        <div style="display: flex; justify-content: center">
-        <div style="background-color: rgba(255,255,255,0.6); padding: 2.5%;">
+    <div style="display: flex; justify-content: center">
+      <div style="background-color: rgba(255, 255, 255, 0.6); padding: 2.5%">
         Currently, no reviews available for this book.
-        </div>
-        </div>
+      </div>
+    </div>
 
     {% endif %}
   </div>
 </div>
-{% for message in get_flashed_messages() %}
-<div
-  class="alert alert-warning custom-warning"
-  id="my_div"
-  style="margin-left: 40%; margin-right: 40%; margin-top: 2%"
->
-  <button type="button" class="close" data-dismiss="alert" id="close_but">
-    &times;
-  </button>
-  {{ message }}
-</div>
-{% endfor %}
+
 <script>
-  $("#close_but").click(function () {
-    $("#my_div").hide();
-  });
+  $('.message').slideDown(function() {
+    setTimeout(function() {
+        $('.message').slideUp();
+    }, 3000);
+});
 </script>
 <style>
   .sidenav {
@@ -183,12 +225,12 @@
     background-repeat: no-repeat;
     background-size: cover;
   }
- .table-wrapper{
+  .table-wrapper {
     margin: 10px 70px 70px;
-    box-shadow: 0px 35px 50px rgba( 0, 0, 0, 0.2 );
-}
+    box-shadow: 0px 35px 50px rgba(0, 0, 0, 0.2);
+  }
 
-.fl-table {
+  .fl-table {
     border-radius: 5px;
     font-size: 12px;
     font-weight: normal;
@@ -198,101 +240,103 @@
     max-width: 100%;
     white-space: nowrap;
     background-color: white;
-}
+  }
 
-.fl-table td, .fl-table th {
+  .fl-table td,
+  .fl-table th {
     text-align: center;
     padding: 8px;
-}
+  }
 
-.fl-table td {
+  .fl-table td {
     border-right: 1px solid #f8f8f8;
     font-size: 12px;
-}
+  }
 
-.fl-table thead th {
+  .fl-table thead th {
     color: #ffffff;
-    background: #4FC3A1;
-}
+    background: #4fc3a1;
+  }
 
-
-.fl-table thead th:nth-child(odd) {
+  .fl-table thead th:nth-child(odd) {
     color: #ffffff;
     background: #324960;
-}
+  }
 
-.fl-table tr:nth-child(even) {
-    background: #F8F8F8;
-}
+  .fl-table tr:nth-child(even) {
+    background: #f8f8f8;
+  }
 
-/* Responsive */
+  /* Responsive */
 
-@media (max-width: 767px) {
+  @media (max-width: 767px) {
     .fl-table {
-        display: block;
-        width: 100%;
+      display: block;
+      width: 100%;
     }
-    .table-wrapper:before{
-        content: "Scroll horizontally >";
-        display: block;
-        text-align: right;
-        font-size: 11px;
-        color: white;
-        padding: 0 0 10px;
+    .table-wrapper:before {
+      content: "Scroll horizontally >";
+      display: block;
+      text-align: right;
+      font-size: 11px;
+      color: white;
+      padding: 0 0 10px;
     }
-    .fl-table thead, .fl-table tbody, .fl-table thead th {
-        display: block;
+    .fl-table thead,
+    .fl-table tbody,
+    .fl-table thead th {
+      display: block;
     }
-    .fl-table thead th:last-child{
-        border-bottom: none;
+    .fl-table thead th:last-child {
+      border-bottom: none;
     }
     .fl-table thead {
-        float: left;
+      float: left;
     }
     .fl-table tbody {
-        width: auto;
-        position: relative;
-        overflow-x: auto;
+      width: auto;
+      position: relative;
+      overflow-x: auto;
     }
-    .fl-table td, .fl-table th {
-        padding: 20px .625em .625em .625em;
-        height: 60px;
-        vertical-align: middle;
-        box-sizing: border-box;
-        overflow-x: hidden;
-        overflow-y: auto;
-        width: 120px;
-        font-size: 13px;
-        text-overflow: ellipsis;
+    .fl-table td,
+    .fl-table th {
+      padding: 20px 0.625em 0.625em 0.625em;
+      height: 60px;
+      vertical-align: middle;
+      box-sizing: border-box;
+      overflow-x: hidden;
+      overflow-y: auto;
+      width: 120px;
+      font-size: 13px;
+      text-overflow: ellipsis;
     }
     .fl-table thead th {
-        text-align: left;
-        border-bottom: 1px solid #f7f7f9;
-        font-size: 1.5em;
-        font-weight: bold;
+      text-align: left;
+      border-bottom: 1px solid #f7f7f9;
+      font-size: 1.5em;
+      font-weight: bold;
     }
     .fl-table tbody tr {
-        display: table-cell;
+      display: table-cell;
     }
     .fl-table tbody tr:nth-child(odd) {
-        background: none;
+      background: none;
     }
     .fl-table tr:nth-child(even) {
-        background: transparent;
+      background: transparent;
     }
     .fl-table tr td:nth-child(odd) {
-        background: #F8F8F8;
-        border-right: 1px solid #E6E4E4;
+      background: #f8f8f8;
+      border-right: 1px solid #e6e4e4;
     }
     .fl-table tr td:nth-child(even) {
-        border-right: 1px solid #E6E4E4;
+      border-right: 1px solid #e6e4e4;
     }
     .fl-table tbody td {
-        display: block;
-        text-align: center;
+      display: block;
+      text-align: center;
     }
-}
+  }
 </style>
-
 
 {% endblock %}
