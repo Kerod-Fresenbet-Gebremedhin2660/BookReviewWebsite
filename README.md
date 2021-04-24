@@ -1,3 +1,17 @@
+# Kerod Fresenbet Gebremdhin
+## ATR/2660/10
+### ADD STUDENT
+
+* This app has been deployed to Heroku
+    * [Heroku Link](https://web-prog-1.herokuapp.com/)
+    
+* The CSS has not been tested for responsiveness
+* The main menu is accessible via the hamburger menu in the top right corner
+* The api endpoint access is fulfilled and requires basic authorization
+** User agents like postman may be used to test
+
+
+
 # Project 1: Books
 This project is adopted form Harvard's most popular class **CS50** Programming with Python and JavaScript [[1]](#1).
 
