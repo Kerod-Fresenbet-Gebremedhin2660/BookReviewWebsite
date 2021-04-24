@@ -71,26 +71,74 @@ def detail_fetcher(isbn):
     For Fetching details on the books from Remote API Open Library
     :param isbn:
     :return: title, first sentence and book cover, isbn
+    :return: also returns 0s if the API can not resolve the ISBN
     """
-    details_book = requests.get(
-        "https://openlibrary.org/api/books?bibkeys=ISBN:" + str(isbn) + "&jscmd=details&format=json").content
-    details_book = json.loads(details_book.decode('utf-8'))
-    details_book = details_book.get('ISBN:' + str(isbn))
-    details_book = details_book.get('details')
-    # Information to send to template
-    title = details_book.get('title')
-    first_sentence = details_book.get('first_sentence').get('value')
+    title = get_title(isbn)
+    first_sentence = get_first_sentence(isbn)
     open_lib_cover = "http://covers.openlibrary.org/b/isbn/" + str(isbn) + "-L.jpg"
-
     return {"title": title, "fs": first_sentence, "olc": open_lib_cover, "isbn": isbn}
+
+
+def get_title(isbn):
+    pay_load = requests.get(
+        "https://openlibrary.org/api/books?bibkeys=ISBN:" + str(isbn) + "&jscmd=details&format=json").content
+    pay_load = json.loads(pay_load.decode('utf-8'))
+
+    if pay_load is None:
+        return "There is no information available for this particular book."
+    pay_load = pay_load.get('ISBN:' + str(isbn))
+    if pay_load is None:
+        return "There is no information available for this particular book."
+    pay_load = pay_load.get('details')
+    if pay_load is None:
+        return "There is no information available for this particular book."
+    title = pay_load.get('title')
+    if title is None:
+        return "There is no title information available for this particular book"
+    return title
+
+
+def get_first_sentence(isbn):
+    pay_load = requests.get(
+        "https://openlibrary.org/api/books?bibkeys=ISBN:" + str(isbn) + "&jscmd=details&format=json").content
+    pay_load = json.loads(pay_load.decode('utf-8'))
+
+    if pay_load is None:
+        return "There is no information available for this particular book."
+    pay_load = pay_load.get('ISBN:' + str(isbn))
+    if pay_load is None:
+        return "There is no information available for this particular book."
+    pay_load = pay_load.get('details')
+    if pay_load is None:
+        return "There is no information available for this particular book."
+    first_sentence = pay_load.get('first_sentence')
+    if first_sentence is None:
+        first_sentence = pay_load.get('details')
+        if first_sentence is None:
+            return "There is no information available for this particular book."
+        first_sentence = first_sentence.get('description')[:20] + '...'
+        return first_sentence
+    first_sentence = first_sentence.get('value')
+    return first_sentence
+
+
+def goodreads(isbn):
+    res = requests.get('https://www.goodreads.com/book/review_counts.json?k&isbns=' + isbn).content
+    res = json.loads(res.decode('utf-8'))
+    res = res.get('books')[0]
+    reviews_count = res.get('reviews_count')
+    ratings_count = res.get('ratings_count')
+    return {"rc": ratings_count, "rec": reviews_count}
 
 
 # Custom Decorator to require login for session
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        name_form = NameForm()
         if session.get('username') is None or session.get('logged_in') is False:
-            return render_template('landing_page.html')
+            flash("You need to be logged in!")
+            return redirect(url_for('login', name_form=name_form))
         return f(*args, **kwargs)
 
     return decorated_function
@@ -155,7 +203,7 @@ def login():
     if name_form.validate_on_submit():
         password = str(name_form.password.data)
         if session.get('username') == name_form.email.data:
-            flash('You are already logged in', 'danger')
+            flash("You are already logged in", "login")
             return redirect(url_for('search', check="Still in Session"))
 
         stmt = "SELECT * FROM public.\"Users\" WHERE username =:username"
@@ -166,17 +214,16 @@ def login():
                 session['logged_in'] = True
                 name_form.email.data = ''
                 name_form.password.data = ''
-                # return render_template('protected.html', check="New Login")
                 return redirect(url_for('search', check="New Login"))
             else:
                 name_form.email.data = ''
                 name_form.password.data = ''
-                flash('Improper Credentials!')
-                return redirect('login')
+                flash("Improper Credentials", "login")
+                return redirect(url_for('login'))
         else:
             name_form.email.data = ''
             name_form.password.data = ''
-            return jsonify({"message": "No Such User"})
+            return redirect(url_for('login'))
     return render_template("login.html", name_form=name_form)
 
 
@@ -251,7 +298,8 @@ def details(isbn):
         rev.rating.data = ''
     dets = detail_fetcher(isbn)
     more_dets = handler(isbn)
-    return render_template('review.html', rev=rev, dets=dets, more_dets=more_dets, res=res)
+    counts = goodreads(isbn)
+    return render_template('review.html', rev=rev, dets=dets, more_dets=more_dets, res=res, counts=counts)
 
 
 # :TODO Make sure to test the search feature

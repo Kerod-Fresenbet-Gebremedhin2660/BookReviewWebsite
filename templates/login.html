@@ -1,4 +1,5 @@
-{% extends 'base.html' %} {% block head %} {{ super() }}
+{% extends 'base.html' %}
+{% block head %} {{ super() }}
 <link
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css"
@@ -6,7 +7,9 @@
 <link rel="stylesheet" href="../static/css/style_2.css" />
     <link rel="stylesheet" href="../static/css/login.css">
     <script defer src="../static/js/jquery.min.js"></script>
-{% endblock %} {% block body %} {{ super() }}
+{% endblock %}
+{% block body %}
+    {{ super() }}
 <div class="contain">
   <form method="post">
     {{ name_form.hidden_tag() }}
@@ -31,22 +34,24 @@
     </div>
   </form>
 </div>
-{% for message in get_flashed_messages() %}
-<div
-  class="alert alert-warning custom-warning"
-  id="my_div"
-  style="margin-left: 40%; margin-right: 40%; margin-top: 2%"
->
-  <button type="button" class="close" data-dismiss="alert" id="close_but">&times;</button>
-  {{ message }}
-</div>
-{% endfor %}
+    <div class="message">
+
+    </div>
+    {% for message in get_flashed_messages() %}
+        <section style="display: flex; justify-content: center;">
+        <div class="message" style="display: flex; justify-content: center; align-content: center; background-color: rgba(0,0,0,0.6); margin-top: 5%; padding: 2%;">
+            {{ message }}
+        </div>
+        </section>
+    {% else %}
+    {% endfor %}
 <script>
-    $("#close_but").click(function () {
-        $("#my_div").hide();
-    })
+    $('.message').slideDown(function() {
+    setTimeout(function() {
+        $('.message').slideUp();
+    }, 3000);
+});
     $('body').css('background-image', 'url("../static/cool_bg.jpg")')
 </script>
-
 
 {% endblock %}
